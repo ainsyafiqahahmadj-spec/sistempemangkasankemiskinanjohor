@@ -209,7 +209,7 @@
         <div class="page-header">
           <div>
             <h2>Dashboard Profil Kemiskinan Negeri Johor</h2>
-            <p>Data bancian isi rumah mengikut 2 penanda aras PGK rasmi.</p>
+            <p>Data bancian isi rumah mengikut 2 penanda aras PGK rasmi[cite: 1].</p>
           </div>
           <button class="btn btn-johor" onclick="exportExcel()">⬇ Eksport Data (Excel)</button>
         </div>
@@ -268,7 +268,7 @@
         <div class="page-header">
           <div>
             <h2>Pangkalan Data Bancian Kemiskinan</h2>
-            <p>Carian, semakan status kelayakan PGK dan tindakan profil isi rumah.</p>
+            <p>Carian, semakan status kelayakan PGK dan tindakan profil isi rumah[cite: 1].</p>
           </div>
         </div>
         <div class="card">
@@ -322,14 +322,14 @@
         <div class="card">
           <div class="card-title">Ringkasan Analisa Lapangan</div>
           <div style="font-size:0.85rem; line-height:1.6; color:#334155;">
-            <p>Data bancian ini digunakan oleh <strong>Bahagian Pemantauan Projek dan Kesejahteraan Rakyat, Pejabat Setiausaha Kerajaan Johor</strong> bagi merangka intervensi bantuan modal insan, agihan bantuan agensi kerajaan, dan program pemerkasaan pendapatan isi rumah.</p>
+            <p>Data bancian ini digunakan oleh <strong>Bahagian Pemantauan Projek dan Kesejahteraan Rakyat, Pejabat Setiausaha Kerajaan Johor</strong> bagi merangka intervensi bantuan modal insan, agihan bantuan agensi kerajaan, dan program pemerkasaan pendapatan isi rumah[cite: 1].</p>
           </div>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- MODAL BORANG BANCIAN -->
+  <!-- MODAL BORANG BANCIAN (TAMBAH / EDIT) -->
   <div class="modal-overlay" id="modalForm">
     <div class="modal-container">
       <div class="modal-header">
@@ -433,7 +433,7 @@
 
           <!-- BAHAGIAN B -->
           <div class="form-section-title" style="display:flex; justify-content:space-between; align-items:center;">
-            <span>B. MAKLUMAT AHLI ISI RUMAH (AI</span>
+            <span>B. MAKLUMAT AHLI ISI RUMAH (AIR)</span>
             <button type="button" class="btn btn-outline" style="padding:4px 8px; font-size:0.75rem;" onclick="addAirRow()">+ Tambah AIR</button>
           </div>
           <div class="table-responsive">
@@ -484,7 +484,7 @@
             </div>
             <div class="form-group">
               <label>Agensi / Pemberi Bantuan (Jika Ada)</label>
-              <input type="text" id="fHelpAgency" placeholder="Contoh: JKM / MAINJ / JKM">
+              <input type="text" id="fHelpAgency" placeholder="Contoh: JKM / MAINJ">
             </div>
             <div class="form-group">
               <label>Jumlah Bantuan Sebulan (RM)</label>
@@ -523,6 +523,23 @@
     </div>
   </div>
 
+  <!-- MODAL PAPARAN MAKLUMAT PENUH KIR (VIEW PROFIL) -->
+  <div class="modal-overlay" id="modalView">
+    <div class="modal-container" style="max-width: 900px;">
+      <div class="modal-header">
+        <h3>Profil Penuh Ketua Isi Rumah (KIR)</h3>
+        <button onclick="closeViewModal()" style="background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body" id="viewContent">
+        <!-- Kandungan dijana oleh JavaScript -->
+      </div>
+      <div class="modal-footer no-print">
+        <button type="button" class="btn btn-outline" onclick="closeViewModal()">Tutup</button>
+        <button type="button" class="btn btn-johor" onclick="window.print()">🖨 Cetak Profil A4</button>
+      </div>
+    </div>
+  </div>
+
   <footer class="site-footer">
     &copy; 2026 Bahagian Pemantauan Projek dan Kesejahteraan Rakyat, Pejabat Setiausaha Kerajaan Johor. Hak Cipta Terpelihara.
   </footer>
@@ -537,9 +554,8 @@
       "Penternakan", "Perikanan", "Perniagaan / Jualan", "Dandanan / Kecantikan", 
       "Pengasuhan Kanak-Kanak", "Pembaikan Peralatan Elektrik", "Komputer / IT", 
       "Kraftangan", "Fotografi / Videografi", "Pemanduan / Pengangkutan"
-    ]; //
+    ];[cite: 1]
 
-    // DATA PROTOTYPE CONTOH UNTUK DEMO AWAL
     const SAMPLE_RECORDS = [
       {
         id: "rec-01",
@@ -560,7 +576,7 @@
           { nama: "Muhammad Arif", hubungan: "Anak", umur: 12, kerja: "Pelajar", inc: 0 }
         ],
         totalInc: 1600,
-        perCapita: 400.00, // 1600 / 4 = 400 (<= 830 -> Miskin Bandar)
+        perCapita: 400.00,
         statusPGK: "Miskin (Bandar)",
         hasHelp: "Ya",
         helpAgency: "JKM",
@@ -590,7 +606,7 @@
           { nama: "Aiman Hafiz", hubungan: "Anak", umur: 14, kerja: "Pelajar", inc: 0 }
         ],
         totalInc: 1450,
-        perCapita: 483.33, // 1450 / 3 = 483.33 (<= 677 -> Miskin Luar Bandar)
+        perCapita: 483.33,
         statusPGK: "Miskin (Luar Bandar)",
         hasHelp: "Ya",
         helpAgency: "MAINJ",
@@ -620,7 +636,7 @@
           { nama: "Danish Irfan", hubungan: "Anak", umur: 8, kerja: "Pelajar", inc: 0 }
         ],
         totalInc: 4300,
-        perCapita: 1433.33, // 4300 / 3 = 1433.33 (> 677 -> Lepas PGK)
+        perCapita: 1433.33,
         statusPGK: "Lepas PGK",
         hasHelp: "Tidak",
         helpAgency: "-",
@@ -649,7 +665,7 @@
           { nama: "Nur Azlina", hubungan: "Anak", umur: 20, kerja: "Tidak Bekerja", inc: 0 }
         ],
         totalInc: 1100,
-        perCapita: 550.00, // 1100 / 2 = 550 (<= 830 -> Miskin Bandar)
+        perCapita: 550.00,
         statusPGK: "Miskin (Bandar)",
         hasHelp: "Ya",
         helpAgency: "JKM",
@@ -667,7 +683,7 @@
 
     function initSkillsCheckboxes() {
       const container = document.getElementById('skillsContainer');
-      container.innerHTML = SKILLS_LIST.map((s, idx) => `
+      container.innerHTML = SKILLS_LIST.map(s => `
         <label class="skill-item">
           <input type="checkbox" name="skillCheck" value="${s}"> ${s}
         </label>
@@ -798,12 +814,127 @@
             <td><strong>RM ${r.perCapita.toFixed(2)}</strong></td>
             <td><span class="badge ${badgeColor}">${r.statusPGK}</span></td>
             <td>
+              <button class="btn btn-outline" style="padding:4px 8px; font-size:0.75rem; color:var(--johor-blue);" onclick="viewRecord('${r.id}')">👁 Papar</button>
               <button class="btn btn-outline" style="padding:4px 8px; font-size:0.75rem;" onclick="editRecord('${r.id}')">Edit</button>
               <button class="btn btn-outline" style="padding:4px 8px; font-size:0.75rem; color:var(--johor-red);" onclick="deleteRecord('${r.id}')">Padam</button>
             </td>
           </tr>
         `;
       });
+    }
+
+    function viewRecord(id) {
+      const r = records.find(x => x.id === id);
+      if (!r) return;
+
+      const airRows = (r.air && r.air.length > 0)
+        ? r.air.map((a, i) => `
+            <tr>
+              <td>${i + 1}</td>
+              <td><strong>${a.nama || '-'}</strong></td>
+              <td>${a.hubungan || '-'}</td>
+              <td>${a.umur || '-'} tahun</td>
+              <td>${a.kerja || '-'}</td>
+              <td>RM ${parseFloat(a.inc || 0).toFixed(2)}</td>
+            </tr>
+          `).join('')
+        : `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Tiada ahli isi rumah didaftarkan.</td></tr>`;
+
+      const skillsList = (r.skills && r.skills.length > 0)
+        ? r.skills.map(s => `<span class="badge badge-blue" style="margin:2px;">${s}</span>`).join(' ')
+        : '<span style="color:var(--text-muted); font-size:0.8rem;">Tiada kemahiran dinyatakan</span>';
+
+      const html = `
+        <div style="border-bottom: 2px solid var(--johor-gold); padding-bottom: 12px; margin-bottom: 16px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <h2 style="color:var(--johor-blue); margin:0; font-size:1.3rem;">${r.nama}</h2>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-top:2px;">No. KP: ${r.ic} | Tel: ${r.phone || 'Tiada'}</p>
+          </div>
+          <div style="text-align:right;">
+            <span class="badge ${r.statusPGK.startsWith('Miskin') ? 'badge-red' : 'badge-green'}" style="font-size:0.9rem; padding:6px 12px;">
+              ${r.statusPGK}
+            </span>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Strata: ${r.strata}</div>
+          </div>
+        </div>
+
+        <div class="form-section-title">A. MAKLUMAT ASAS KETUA ISI RUMAH (KIR)</div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; font-size:0.85rem; background:#f8fafc; padding:12px; border-radius:8px; margin-bottom:14px;">
+          <div><strong>Umur:</strong> ${r.umur || '-'} tahun</div>
+          <div><strong>Jantina:</strong> ${r.jantina || '-'}</div>
+          <div><strong>Status Berkahwin:</strong> ${r.kahwin || '-'}</div>
+          <div><strong>Daerah:</strong> ${r.daerah}</div>
+          <div><strong>DUN / Mukim:</strong> ${r.dun || '-'}</div>
+          <div><strong>Pendidikan:</strong> ${r.edu || '-'}</div>
+          <div><strong>Pekerjaan:</strong> ${r.kerja || '-'}</div>
+          <div><strong>Kategori:</strong> ${r.productivity || 'Produktif'}</div>
+        </div>
+
+        <div class="calc-box" style="margin: 12px 0;">
+          <div>
+            <small>Pendapatan KIR</small>
+            <div style="font-size:1.1rem;">RM ${parseFloat(r.incomeKir || 0).toFixed(2)}</div>
+          </div>
+          <div>
+            <small>Jumlah Pendapatan Isi Rumah</small>
+            <div style="font-size:1.1rem;">RM ${parseFloat(r.totalInc || 0).toFixed(2)}</div>
+          </div>
+          <div>
+            <small>Jumlah Tanggungan (AIR)</small>
+            <div style="font-size:1.1rem;">${(r.air ? r.air.length : 0) + 1} Orang</div>
+          </div>
+          <div>
+            <small>Pendapatan Per Kapita</small>
+            <div style="font-size:1.1rem; color:${r.statusPGK.startsWith('Miskin') ? 'var(--johor-red)' : 'var(--success)'};">
+              RM ${parseFloat(r.perCapita || 0).toFixed(2)}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section-title">B. SENARAI AHLI ISI RUMAH (AIR)</div>
+        <div class="table-responsive" style="margin-bottom:14px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Bil</th>
+                <th>Nama AIR</th>
+                <th>Hubungan</th>
+                <th>Umur</th>
+                <th>Pekerjaan</th>
+                <th>Pendapatan</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${airRows}
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:14px;">
+          <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
+            <strong style="color:var(--johor-blue); font-size:0.85rem;">C. Status Bantuan Agensi</strong>
+            <p style="font-size:0.85rem; margin-top:6px;">Menerima Bantuan: <strong>${r.hasHelp || 'Tidak'}</strong></p>
+            <p style="font-size:0.85rem;">Agensi: <strong>${r.helpAgency || '-'}</strong></p>
+            <p style="font-size:0.85rem;">Nilai Bantuan Sebulan: <strong>RM ${parseFloat(r.helpVal || 0).toFixed(2)}</strong></p>
+          </div>
+          <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
+            <strong style="color:var(--johor-blue); font-size:0.85rem;">D. Kemahiran & Potensi</strong>
+            <div style="margin-top:6px;">${skillsList}</div>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border-color); padding-top:10px; font-size:0.8rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+          <div>Ketua Kampung / Penghulu: <strong>${r.kkName || '-'}</strong> (${r.kkPhone || 'Tiada No Tel'})</div>
+          <div>Tarikh Bancian: <strong>${r.kkDate || '-'}</strong></div>
+        </div>
+      `;
+
+      document.getElementById('viewContent').innerHTML = html;
+      document.getElementById('modalView').classList.add('show');
+    }
+
+    function closeViewModal() {
+      document.getElementById('modalView').classList.remove('show');
     }
 
     function openModal() {
@@ -878,7 +1009,6 @@
       const productivity = document.getElementById('fProductivity').value;
       const phone = document.getElementById('fPhone').value;
 
-      // Ahli Isi Rumah (AIR)
       const air = [];
       const rows = document.querySelectorAll('#airTableBody tr');
       let airIncTotal = 0;
@@ -897,7 +1027,6 @@
       const perCapita = totalInc / totalPax;
       const statusPGK = checkPGK(strata, perCapita);
 
-      // Kemahiran
       const selectedSkills = [];
       document.querySelectorAll('input[name="skillCheck"]:checked').forEach(cb => {
         selectedSkills.push(cb.value);
@@ -973,7 +1102,6 @@
       XLSX.writeFile(wb, "Data_Bancian_Kemiskinan_SUK_Johor.xlsx");
     }
 
-    // Inisialisasi awal
     initSkillsCheckboxes();
     renderDashboard();
     renderRecordsTable();
