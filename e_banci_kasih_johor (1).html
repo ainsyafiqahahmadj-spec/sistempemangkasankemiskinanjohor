@@ -3,2267 +3,980 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>e-Banci Kasih Johor | Pejabat Setiausaha Kerajaan Johor (SUK Johor)</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- SheetJS CDN for Excel Export -->
+  <title>e-Banci Kasih Johor | Sistem Profil & Pemangkasan Kemiskinan</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <!-- FontAwesome 6 Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Font: Plus Jakarta Sans -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            johor: {
-              navy: '#0c2340',
-              deepnavy: '#071526',
-              blue: '#133e70',
-              brightblue: '#1d5d9b',
-              red: '#c51f24',
-              darkred: '#901216',
-              gold: '#c59b27',
-              royalGold: '#d4af37',
-              goldhover: '#b58b1f',
-              lightgold: '#fef3c7',
-              cream: '#f8fafc',
-            }
-          },
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            jawi: ['Amiri', 'serif']
-          }
-        }
-      }
-    }
-  </script>
-
   <style>
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #f1f5f9;
-      color: #1e293b;
-    }
-    
-    /* Scrollbar style */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #e2e8f0;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #94a3b8;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #64748b;
+    :root {
+      --johor-blue: #0c2340;
+      --johor-blue-light: #183b63;
+      --johor-red: #c51f24;
+      --johor-gold: #c59b27;
+      --johor-gold-soft: #fff9e6;
+      --bg-slate: #f1f5f9;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --success: #16a34a;
+      --radius: 10px;
     }
 
-    /* Print styling strictly tailored for official government documentation */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+    body { background: var(--bg-slate); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
+
+    header {
+      background: linear-gradient(135deg, var(--johor-blue) 0%, #051424 100%);
+      color: #fff;
+      padding: 10px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 4px solid var(--johor-gold);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-wrap { display: flex; align-items: center; gap: 16px; }
+    .brand-logos { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.08); padding: 6px 12px; border-radius: 8px; }
+    .brand-text h1 { font-size: 1.1rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .brand-text p { font-size: 0.75rem; color: #cbd5e1; }
+    .badge-tag { background: var(--johor-gold); color: #000; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+
+    .main-layout { display: flex; flex: 1; }
+    aside.sidebar {
+      width: 250px;
+      background: #fff;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 10px;
+      gap: 4px;
+    }
+    aside.sidebar button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 12px 14px;
+      border: none;
+      background: none;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+    aside.sidebar button:hover, aside.sidebar button.active {
+      background: #eaf2fb;
+      color: var(--johor-blue);
+    }
+    aside.sidebar button.active {
+      border-left: 4px solid var(--johor-red);
+      font-weight: 700;
+    }
+
+    main.content { flex: 1; padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .page-header h2 { font-size: 1.4rem; color: var(--johor-blue); font-weight: 800; }
+    .page-header p { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: 0.2s;
+    }
+    .btn-johor { background: var(--johor-blue); color: #fff; }
+    .btn-johor:hover { background: var(--johor-blue-light); }
+    .btn-red { background: var(--johor-red); color: #fff; }
+    .btn-outline { background: #fff; border: 1px solid var(--border-color); color: var(--text-main); }
+    .btn-outline:hover { background: #f8fafc; }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .kpi-card { background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 16px; position: relative; border-left: 5px solid var(--johor-blue); }
+    .kpi-card.red { border-left-color: var(--johor-red); }
+    .kpi-card.gold { border-left-color: var(--johor-gold); }
+    .kpi-card.green { border-left-color: var(--success); }
+    .kpi-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
+    .kpi-val { font-size: 1.7rem; font-weight: 800; color: var(--johor-blue); margin-top: 4px; }
+    .kpi-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+
+    .card { background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+    .card-title { font-size: 1rem; font-weight: 700; color: var(--johor-blue); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+
+    .table-responsive { width: 100%; overflow-x: auto; border: 1px solid var(--border-color); border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.82rem; }
+    th { background: #f8fafc; color: var(--johor-blue); font-weight: 700; padding: 10px 12px; border-bottom: 2px solid var(--border-color); white-space: nowrap; }
+    td { padding: 10px 12px; border-bottom: 1px solid var(--border-color); }
+    tr:hover td { background: #f8fafc; }
+
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; display: inline-block; white-space: nowrap; }
+    .badge-red { background: #fee2e2; color: var(--johor-red); }
+    .badge-green { background: #dcfce7; color: var(--success); }
+    .badge-blue { background: #e0f2fe; color: #0369a1; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 200; padding: 16px; }
+    .modal-overlay.show { display: flex; }
+    .modal-container { background: #fff; width: 100%; max-width: 1050px; max-height: 92vh; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; }
+    .modal-header { background: var(--johor-blue); color: #fff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--johor-gold); }
+    .modal-body { padding: 20px; overflow-y: auto; }
+    .modal-footer { padding: 14px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; background: #f8fafc; }
+
+    .form-section-title { font-size: 0.92rem; font-weight: 700; color: var(--johor-blue); margin: 16px 0 10px; padding-bottom: 4px; border-bottom: 2px solid #e2e8f0; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    label { font-size: 0.75rem; font-weight: 700; color: #334155; }
+    input, select, textarea { padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.82rem; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: var(--johor-blue); }
+
+    .calc-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px; margin: 16px 0; display: flex; justify-content: space-around; text-align: center; }
+    .calc-box small { font-size: 0.72rem; color: #166534; font-weight: 700; }
+    .calc-box div { font-size: 1.25rem; font-weight: 800; color: #14532d; }
+
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-top: 8px; }
+    .skill-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; }
+
+    footer.site-footer { background: #fff; border-top: 1px solid var(--border-color); padding: 16px; text-align: center; font-size: 0.76rem; color: var(--text-muted); }
+
     @media print {
-      .no-print {
-        display: none !important;
-      }
-      body {
-        background: #ffffff !important;
-        font-size: 11pt !important;
-        color: #000000 !important;
-      }
-      .print-only {
-        display: block !important;
-      }
-      .print-shadow-none {
-        box-shadow: none !important;
-        border: 1px solid #cbd5e1 !important;
-      }
-      #profileModal {
-        position: static !important;
-        display: block !important;
-        background: transparent !important;
-        padding: 0 !important;
-      }
-      #profileModal > div {
-        max-width: 100% !important;
-        box-shadow: none !important;
-        border: none !important;
-      }
-      #printableContent {
-        padding: 0 !important;
-      }
+      header, aside.sidebar, .btn, .modal-footer, .no-print { display: none !important; }
+      body { background: #fff; }
+      .main-layout { display: block; }
+      main.content { padding: 0; max-width: 100%; }
+      .modal-overlay { position: static; background: none; display: block; padding: 0; }
+      .modal-container { max-height: none; border: none; }
     }
   </style>
 </head>
-<body class="text-slate-800 flex flex-col min-h-screen">
+<body>
 
-  <!-- Top Sovereign Ribbon Motif -->
-  <div class="h-1.5 w-full flex no-print">
-    <div class="w-1/3 bg-johor-red"></div>
-    <div class="w-1/3 bg-white"></div>
-    <div class="w-1/3 bg-johor-blue"></div>
-  </div>
-
-  <header class="bg-johor-deepnavy text-white border-b-4 border-johor-gold shadow-xl no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
-      
-      <!-- Left: Official Jata Johor & System Identity -->
-      <div class="flex items-center gap-3.5">
-        <!-- LOGO 1: Jata Kerajaan Negeri Johor Container -->
-        <div class="w-14 h-14 rounded-xl bg-white p-1 shadow-md border-2 border-johor-gold flex items-center justify-center shrink-0">
-          <svg class="w-full h-full" viewBox="0 0 700 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Jata Negeri Johor">
-            <!-- Crown Base -->
-            <path d="M250 180 Q350 145 450 180 L440 225 Q350 205 260 225 Z" fill="#0C2340" stroke="#C59B27" stroke-width="8"/>
-            <path d="M260 215 Q350 200 440 215 L435 230 Q350 215 265 230 Z" fill="#D4AF37"/>
-            <!-- Crown Jewels / Ornaments -->
-            <circle cx="310" cy="180" r="14" fill="#C51F24" stroke="#D4AF37" stroke-width="4"/>
-            <circle cx="350" cy="170" r="16" fill="#D4AF37"/>
-            <circle cx="390" cy="180" r="14" fill="#C51F24" stroke="#D4AF37" stroke-width="4"/>
-            <!-- Crown Top Crescent and Star -->
-            <path d="M350 115 A18 18 0 1 0 350 150 A14 14 0 1 1 350 120 Z" fill="#D4AF37"/>
-            <polygon points="350,110 353,119 362,119 355,124 357,133 350,128 343,133 345,124 338,119 347,119" fill="#D4AF37"/>
-            
-            <!-- Supporting Tigers Left & Right -->
-            <!-- Left Tiger -->
-            <g id="tiger-left">
-              <path d="M150 170 Q190 180 210 240 Q165 290 140 370 Q160 410 110 490 L130 505 Q190 470 230 430 Q240 340 250 270 Q215 240 185 240 Z" fill="#F59E0B" stroke="#B45309" stroke-width="5"/>
-              <path d="M130 200 Q150 220 180 230" stroke="#000" stroke-width="8" stroke-linecap="round"/>
-              <path d="M140 260 Q170 270 200 280" stroke="#000" stroke-width="8" stroke-linecap="round"/>
-              <path d="M130 320 Q165 330 210 340" stroke="#000" stroke-width="9" stroke-linecap="round"/>
-              <path d="M110 390 Q150 400 180 410" stroke="#000" stroke-width="9" stroke-linecap="round"/>
-              <circle cx="195" cy="195" r="5" fill="#000"/>
-              <!-- Paw on shield -->
-              <ellipse cx="260" cy="270" rx="18" ry="12" fill="#F59E0B" stroke="#000" stroke-width="3"/>
-            </g>
-            <!-- Right Tiger -->
-            <g id="tiger-right" transform="translate(700, 0) scale(-1, 1)">
-              <path d="M150 170 Q190 180 210 240 Q165 290 140 370 Q160 410 110 490 L130 505 Q190 470 230 430 Q240 340 250 270 Q215 240 185 240 Z" fill="#F59E0B" stroke="#B45309" stroke-width="5"/>
-              <path d="M130 200 Q150 220 180 230" stroke="#000" stroke-width="8" stroke-linecap="round"/>
-              <path d="M140 260 Q170 270 200 280" stroke="#000" stroke-width="8" stroke-linecap="round"/>
-              <path d="M130 320 Q165 330 210 340" stroke="#000" stroke-width="9" stroke-linecap="round"/>
-              <path d="M110 390 Q150 400 180 410" stroke="#000" stroke-width="9" stroke-linecap="round"/>
-              <circle cx="195" cy="195" r="5" fill="#000"/>
-              <!-- Paw on shield -->
-              <ellipse cx="260" cy="270" rx="18" ry="12" fill="#F59E0B" stroke="#000" stroke-width="3"/>
-            </g>
-
-            <!-- Royal Central Shield -->
-            <path d="M255 260 L445 260 L425 450 Q350 510 350 510 Q275 450 255 450 Z" fill="#FFFFFF" stroke="#0C2340" stroke-width="12"/>
-            <path d="M265 270 L435 270 L418 440 Q350 495 350 495 Q282 440 265 440 Z" fill="#FFFFFF" stroke="#D4AF37" stroke-width="6"/>
-
-            <!-- Stars around center -->
-            <polygon points="285,285 288,295 298,295 290,301 293,310 285,304 277,310 280,301 272,295 282,295" fill="#0C2340"/>
-            <polygon points="415,285 418,295 428,295 420,301 423,310 415,304 407,310 410,301 402,295 412,295" fill="#0C2340"/>
-            <polygon points="285,420 288,430 298,430 290,436 293,445 285,439 277,445 280,436 272,430 282,430" fill="#0C2340"/>
-            <polygon points="415,420 418,430 428,430 420,436 423,445 415,439 407,445 410,436 402,430 412,430" fill="#0C2340"/>
-
-            <!-- Center Crescent and Star in Shield -->
-            <path d="M350 330 A45 45 0 1 0 350 420 A36 36 0 1 1 350 340 Z" fill="#D4AF37" stroke="#0C2340" stroke-width="3"/>
-            <polygon points="350,345 355,360 371,360 358,370 363,385 350,375 337,385 342,370 329,360 345,360" fill="#D4AF37" stroke="#0C2340" stroke-width="2"/>
-
-            <!-- Bottom Motto Ribbon (Kepada Allah Berserah) -->
-            <path d="M120 535 Q350 630 580 535 L565 595 Q350 690 135 595 Z" fill="#0C2340" stroke="#D4AF37" stroke-width="7"/>
-            <!-- Jawi Inscription (Vector Graphic) -->
-            <text x="350" y="610" font-family="'Amiri', serif" font-size="44" font-weight="bold" fill="#F59E0B" text-anchor="middle">کڤد الله برکره</text>
-          </svg>
-        </div>
-
-        <!-- Title & Subtitles -->
-        <div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-[10px] sm:text-xs uppercase tracking-wider font-bold px-2 py-0.5 rounded bg-johor-gold text-johor-deepnavy">
-              Kerajaan Negeri Johor
-            </span>
-            <span class="text-xs text-slate-300 font-medium hidden md:inline-block">
-              Pejabat Setiausaha Kerajaan Johor (SUK Johor)
-            </span>
-          </div>
-          <h1 class="text-lg sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
-            e-Banci Kasih Johor
-          </h1>
-          <p class="text-[11px] sm:text-xs text-slate-300 font-medium">
-            Sistem Profil & Pemangkasan Kemiskinan Isi Rumah &bull; Unit Perancang Ekonomi Negeri (UPEN)
-          </p>
-        </div>
+  <header>
+    <div class="brand-wrap">
+      <div class="brand-logos">
+        <!-- Jata Johor SVG -->
+        <svg width="42" height="42" viewBox="0 0 100 100">
+          <path d="M20,65 C15,45 25,25 40,25 C30,35 30,55 40,65 Z" fill="#c59b27" />
+          <polygon points="50,22 53,30 62,30 55,36 57,45 50,40 43,45 45,36 38,30 47,30" fill="#c59b27" />
+          <path d="M25,82 Q50,70 75,82 Q50,92 25,82" fill="#0c2340" stroke="#c59b27" stroke-width="2" />
+        </svg>
+        <!-- Maju Johor SVG -->
+        <svg width="32" height="38" viewBox="0 0 100 115">
+          <polygon points="50,5 92,28 92,86 50,110 8,86 8,28" fill="#0c2340" stroke="#e2e8f0" stroke-width="4" />
+          <path d="M8,28 L92,28 L92,58 Q50,75 8,58 Z" fill="#c51f24" />
+          <circle cx="42" cy="42" r="12" fill="#fff" />
+          <circle cx="45" cy="42" r="10" fill="#c51f24" />
+          <polygon points="55,40 57,44 62,44 58,47 60,52 55,49 51,52 53,47 48,44 53,44" fill="#fff" />
+        </svg>
       </div>
-
-      <!-- Right: LOGO 2: Official Maju Johor Hexagonal Emblem & Live Status -->
-      <div class="flex items-center gap-4 self-end md:self-center">
-        <!-- Logo Maju Johor Container -->
-        <div class="flex items-center gap-3 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 py-1.5 px-3 rounded-xl transition shadow-inner">
-          <div class="w-11 h-13 shrink-0">
-            <svg class="w-11 h-13 drop-shadow" viewBox="0 0 300 346.41" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Maju Johor">
-              <defs>
-                <clipPath id="headerMajuClip">
-                  <polygon points="150,0 300,86.6 300,259.8 150,346.41 0,259.8 0,86.6" />
-                </clipPath>
-              </defs>
-              <!-- Hexagon Outer Silver/Grey Border -->
-              <polygon points="150,0 300,86.6 300,259.8 150,346.41 0,259.8 0,86.6" fill="#A0AEC0"/>
-              <!-- Hexagon Inner -->
-              <g clip-path="url(#headerMajuClip)">
-                <!-- Red Upper Section -->
-                <rect x="0" y="0" width="300" height="346.41" fill="#C51F24" />
-                <!-- Wavy Blue Bottom Section -->
-                <path d="M0,180 C80,140 180,220 300,150 L300,346.41 L0,346.41 Z" fill="#0C2340"/>
-                <!-- Crescent in Upper Red Area -->
-                <path d="M150,55 A45,45 0 1,0 150,155 A35,35 0 1,1 150,65 Z" fill="#FFFFFF"/>
-                <!-- 5-Pointed Star -->
-                <polygon points="168,75 174,96 195,96 178,109 184,130 168,117 151,130 157,109 140,96 162,96" fill="#FFFFFF"/>
-                <!-- Maju Johor Typography -->
-                <text x="150" y="242" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="34" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">MAJU</text>
-                <text x="150" y="278" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="34" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">JOHOR</text>
-              </g>
-            </svg>
-          </div>
-          <div class="text-left leading-tight hidden sm:block">
-            <span class="text-[10px] uppercase font-extrabold text-amber-300 tracking-wider block">Agenda Strategik</span>
-            <span class="text-xs font-black text-white">MAJU JOHOR 2030</span>
-            <span class="text-[10px] text-slate-300 block">Sifar Miskin Tegar</span>
-          </div>
-        </div>
-
-        <!-- Live Clock & Official Tag -->
-        <div class="text-right hidden lg:block border-l border-slate-700 pl-3">
-          <div class="text-[11px] text-amber-200 font-semibold flex items-center justify-end gap-1">
-            <i class="fa-solid fa-moon"></i> "Kepada Allah Berserah"
-          </div>
-          <div class="text-[11px] text-slate-300" id="currentDateDisplay">Memuatkan tarikh...</div>
-        </div>
+      <div class="brand-text">
+        <h1>e-Banci Kasih Johor <span class="badge-tag">Prototaip</span></h1>
+        <p>Sistem Pemantauan Profil & Pemangkasan Kemiskinan Isi Rumah</p>
       </div>
     </div>
-
-    <!-- Main Navigation Bar -->
-    <nav class="bg-johor-navy border-t border-slate-700/60 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-7xl mx-auto flex items-center gap-1.5 overflow-x-auto py-2">
-        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="tab-btn active-tab flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition whitespace-nowrap bg-johor-red text-white shadow-sm">
-          <i class="fa-solid fa-chart-pie"></i> Dashboard Negeri
-        </button>
-        <button onclick="switchTab('daftar')" id="nav-daftar" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800 transition whitespace-nowrap">
-          <i class="fa-solid fa-file-circle-plus"></i> Borang Bancian KIR
-        </button>
-        <button onclick="switchTab('senarai')" id="nav-senarai" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800 transition whitespace-nowrap">
-          <i class="fa-solid fa-address-book"></i> Pangkalan Rekod KIR
-        </button>
-        <button onclick="switchTab('laporan')" id="nav-laporan" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800 transition whitespace-nowrap">
-          <i class="fa-solid fa-file-excel"></i> Laporan & Penjanaan
-        </button>
-      </div>
-    </nav>
+    <div class="no-print">
+      <button class="btn btn-red" onclick="openModal()">+ Daftar KIR Baharu</button>
+    </div>
   </header>
 
-  <div id="toast" class="fixed bottom-5 right-5 z-50 transform transition-all duration-300 translate-y-24 opacity-0 pointer-events-none">
-    <div class="bg-johor-deepnavy text-white px-5 py-3.5 rounded-xl shadow-2xl border-l-4 border-johor-gold flex items-center gap-3">
-      <div id="toastIcon" class="text-amber-400 text-lg">
-        <i class="fa-solid fa-circle-check"></i>
+  <div class="main-layout">
+    <aside class="sidebar no-print">
+      <button class="active" onclick="switchTab('dash', this)">▣ Dashboard Utama</button>
+      <button onclick="switchTab('records', this)">▤ Pangkalan Data KIR</button>
+      <button onclick="switchTab('reports', this)">▥ Laporan & Eksport</button>
+      <div style="margin-top:auto; padding:10px; background:#f8fafc; border-radius:6px; font-size:0.72rem; color:var(--text-muted); border:1px solid #e2e8f0;">
+        <strong>Ketetapan PGK:</strong><br>
+        • Bandar: ≤ RM830<br>
+        • Luar Bandar: ≤ RM677
       </div>
-      <div>
-        <p id="toastMessage" class="text-xs sm:text-sm font-medium">Tindakan berjaya diproses.</p>
-      </div>
-    </div>
-  </div>
+    </aside>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
-
-    <!-- ==================== TAB 1: DASHBOARD ==================== -->
-    <section id="tab-dashboard-content" class="tab-panel block space-y-6">
-      
-      <!-- Welcome Executive Banner displaying both logos -->
-      <div class="bg-gradient-to-r from-johor-navy via-johor-blue to-johor-deepnavy rounded-2xl p-6 text-white shadow-lg relative overflow-hidden border-2 border-johor-gold/30">
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          
-          <div class="flex items-start sm:items-center gap-4">
-            <!-- Jata Johor Badge -->
-            <div class="w-16 h-16 rounded-xl bg-white p-1.5 shadow-md shrink-0 border border-johor-gold hidden sm:flex items-center justify-center">
-              <svg class="w-full h-full" viewBox="0 0 700 700" fill="none">
-                <!-- Crown -->
-                <path d="M250 180 Q350 145 450 180 L440 225 Q350 205 260 225 Z" fill="#0C2340" stroke="#C59B27" stroke-width="12"/>
-                <circle cx="350" cy="170" r="16" fill="#D4AF37"/>
-                <path d="M350 115 A18 18 0 1 0 350 150 A14 14 0 1 1 350 120 Z" fill="#D4AF37"/>
-                <polygon points="350,110 353,119 362,119 355,124 357,133 350,128 343,133 345,124 338,119 347,119" fill="#D4AF37"/>
-                <!-- Tigers -->
-                <path d="M150 170 Q190 180 210 240 Q165 290 140 370 Q160 410 110 490 L130 505 Q190 470 230 430 Q240 340 250 270 Q215 240 185 240 Z" fill="#F59E0B"/>
-                <path d="M550 170 Q510 180 490 240 Q535 290 560 370 Q540 410 590 490 L570 505 Q510 470 470 430 Q460 340 450 270 Q485 240 515 240 Z" fill="#F59E0B"/>
-                <!-- Shield -->
-                <path d="M255 260 L445 260 L425 450 Q350 510 350 510 Q275 450 255 450 Z" fill="#FFFFFF" stroke="#0C2340" stroke-width="14"/>
-                <path d="M350 330 A45 45 0 1 0 350 420 A36 36 0 1 1 350 340 Z" fill="#D4AF37"/>
-                <polygon points="350,345 355,360 371,360 358,370 363,385 350,375 337,385 342,370 329,360 345,360" fill="#D4AF37"/>
-                <!-- Ribbon -->
-                <path d="M120 535 Q350 630 580 535 L565 595 Q350 690 135 595 Z" fill="#0C2340" stroke="#D4AF37" stroke-width="10"/>
-                <text x="350" y="610" font-family="'Amiri', serif" font-size="44" font-weight="bold" fill="#F59E0B" text-anchor="middle">کڤد الله برکره</text>
-              </svg>
-            </div>
-
-            <div>
-              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-johor-gold/20 text-amber-300 text-xs font-semibold mb-2 border border-johor-gold/30">
-                <i class="fa-solid fa-crown text-amber-400"></i> Pentadbiran Kerajaan Negeri Johor &bull; Maju Johor 2030
-              </div>
-              <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Status Profil & Pemangkasan Kemiskinan</h2>
-              <p class="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl">
-                Instrumen digital SUK Johor bagi mendaftar profil Ketua Isi Rumah (KIR), mengkaji garis kemiskinan (PGK), menilai intervensi bantuan kebajikan dan melatih potensi modal insan di 10 daerah.
-              </p>
-            </div>
-          </div>
-
-          <!-- Maju Johor Hexagon & Action Buttons -->
-          <div class="flex items-center gap-3 shrink-0 flex-wrap">
-            <div class="w-14 h-16 hidden sm:block shrink-0">
-              <svg class="w-full h-full" viewBox="0 0 300 346.41" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="150,0 300,86.6 300,259.8 150,346.41 0,259.8 0,86.6" fill="#CBD5E1"/>
-                <g clip-path="url(#headerMajuClip)">
-                  <rect x="0" y="0" width="300" height="346.41" fill="#C51F24" />
-                  <path d="M0,180 C80,140 180,220 300,150 L300,346.41 L0,346.41 Z" fill="#0C2340"/>
-                  <path d="M150,55 A45,45 0 1,0 150,155 A35,35 0 1,1 150,65 Z" fill="#FFFFFF"/>
-                  <polygon points="168,75 174,96 195,96 178,109 184,130 168,117 151,130 157,109 140,96 162,96" fill="#FFFFFF"/>
-                  <text x="150" y="242" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="34" fill="#FFFFFF" text-anchor="middle">MAJU</text>
-                  <text x="150" y="278" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="34" fill="#FFFFFF" text-anchor="middle">JOHOR</text>
-                </g>
-              </svg>
-            </div>
-
-            <button onclick="openNewForm()" class="bg-johor-red hover:bg-johor-darkred text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl transition shadow-md flex items-center gap-2">
-              <i class="fa-solid fa-plus-circle"></i> Bancian KIR Baharu
-            </button>
-            <button onclick="exportExcelFull()" class="bg-slate-800/90 hover:bg-slate-700 border border-slate-600 text-amber-300 text-xs sm:text-sm font-semibold px-3.5 py-2.5 rounded-xl transition flex items-center gap-2">
-              <i class="fa-solid fa-download"></i> Muat Turun Data
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Card 1: Jumlah KIR -->
-        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-blue-50 text-johor-blue flex items-center justify-center text-xl font-bold">
-            <i class="fa-solid fa-house-user"></i>
-          </div>
+    <main class="content">
+      <!-- TAB 1: DASHBOARD -->
+      <section id="dash" class="page-section active">
+        <div class="page-header">
           <div>
-            <p class="text-xs font-semibold uppercase text-slate-500 tracking-wider">Jumlah KIR Berdaftar</p>
-            <h3 class="text-2xl font-black text-johor-navy" id="kpi-kir-count">0</h3>
-            <p class="text-xs text-slate-400 mt-0.5"><span id="kpi-air-count" class="font-bold text-slate-600">0</span> orang AIR (Tanggungan)</p>
+            <h2>Dashboard Profil Kemiskinan Negeri Johor</h2>
+            <p>Data bancian isi rumah mengikut 2 penanda aras PGK rasmi[cite: 1].</p>
+          </div>
+          <button class="btn btn-johor" onclick="exportExcel()">⬇ Eksport Data (Excel)</button>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Jumlah KIR</div>
+            <div class="kpi-val" id="kpiKir">0</div>
+            <div class="kpi-sub">Ketua Isi Rumah Berdaftar</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Jumlah Tanggungan (AIR)</div>
+            <div class="kpi-val" id="kpiAir">0</div>
+            <div class="kpi-sub">Ahli Isi Rumah</div>
+          </div>
+          <div class="kpi-card red">
+            <div class="kpi-label">Miskin (Bandar: ≤ RM830)</div>
+            <div class="kpi-val" id="kpiPoorUrban">0</div>
+            <div class="kpi-sub">Pendapatan Per Kapita ≤ RM830</div>
+          </div>
+          <div class="kpi-card red">
+            <div class="kpi-label">Miskin (Luar Bandar: ≤ RM677)</div>
+            <div class="kpi-val" id="kpiPoorRural">0</div>
+            <div class="kpi-sub">Pendapatan Per Kapita ≤ RM677</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-label">Lepas PGK</div>
+            <div class="kpi-val" id="kpiAbove">0</div>
+            <div class="kpi-sub">Melebihi Had PGK Strata</div>
           </div>
         </div>
 
-        <!-- Card 2: Miskin Tegar -->
-        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-red-50 text-johor-red flex items-center justify-center text-xl font-bold">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-          </div>
-          <div>
-            <p class="text-xs font-semibold uppercase text-slate-500 tracking-wider">Miskin Tegar (Per Kapita &lt; RM330)</p>
-            <h3 class="text-2xl font-black text-johor-red" id="kpi-tegar-count">0</h3>
-            <p class="text-xs text-slate-400 mt-0.5">Memerlukan intervensi segera</p>
-          </div>
-        </div>
-
-        <!-- Card 3: Produktif / Kemahiran -->
-        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-xl font-bold">
-            <i class="fa-solid fa-briefcase"></i>
-          </div>
-          <div>
-            <p class="text-xs font-semibold uppercase text-slate-500 tracking-wider">KIR Berkemahiran / Produktif</p>
-            <h3 class="text-2xl font-black text-johor-navy" id="kpi-produktif-count">0</h3>
-            <p class="text-xs text-slate-400 mt-0.5">Sasaran Kursus Maju Johor</p>
-          </div>
-        </div>
-
-        <!-- Card 4: Menerima Bantuan -->
-        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl font-bold">
-            <i class="fa-solid fa-hand-holding-heart"></i>
-          </div>
-          <div>
-            <p class="text-xs font-semibold uppercase text-slate-500 tracking-wider">Menerima Bantuan Kebajikan</p>
-            <h3 class="text-2xl font-black text-johor-navy" id="kpi-bantuan-count">0</h3>
-            <p class="text-xs text-slate-400 mt-0.5">MAIJ / JKM / Negeri Johor</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- 10 Districts Table -->
-        <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-          <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
-            <div>
-              <h3 class="text-base sm:text-lg font-bold text-johor-navy flex items-center gap-2">
-                <i class="fa-solid fa-map-location-dot text-johor-red"></i> Taburan Kemiskinan 10 Daerah Johor
-              </h3>
-              <p class="text-xs text-slate-500">Statistik profil KIR mengikut bahagian pentadbiran Pejabat Daerah Johor</p>
-            </div>
-            <span class="text-xs font-bold px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded">10 Daerah Rasmi</span>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs sm:text-sm">
-              <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold">
+        <div class="card">
+          <div class="card-title">Ringkasan Taburan Mengikut 10 Daerah Negeri Johor</div>
+          <div class="table-responsive">
+            <table>
+              <thead>
                 <tr>
-                  <th class="px-3 py-2.5 rounded-l-lg">Daerah</th>
-                  <th class="px-3 py-2.5 text-center">KIR</th>
-                  <th class="px-3 py-2.5 text-center">Tanggungan</th>
-                  <th class="px-3 py-2.5 text-center">Miskin Tegar</th>
-                  <th class="px-3 py-2.5 text-center">Produktif</th>
-                  <th class="px-3 py-2.5 text-right rounded-r-lg">Purata Pendapatan</th>
+                  <th>Daerah</th>
+                  <th>KIR</th>
+                  <th>AIR</th>
+                  <th>Miskin (Bandar)</th>
+                  <th>Miskin (Luar Bandar)</th>
+                  <th>Lepas PGK</th>
+                  <th>Menerima Bantuan</th>
                 </tr>
               </thead>
-              <tbody id="district-breakdown-tbody" class="divide-y divide-slate-100 text-xs sm:text-sm">
-                <!-- Dynamically populated via JS -->
-              </tbody>
+              <tbody id="districtRows"></tbody>
             </table>
           </div>
         </div>
+      </section>
 
-        <!-- Quick Guidelines Card -->
-        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+      <!-- TAB 2: PANGKALAN DATA -->
+      <section id="records" class="page-section">
+        <div class="page-header">
           <div>
-            <div class="flex items-center gap-3 mb-2">
-              <div class="w-9 h-9 rounded-lg bg-johor-deepnavy text-amber-400 flex items-center justify-center text-sm font-black">
-                <i class="fa-solid fa-scale-balanced"></i>
-              </div>
-              <div>
-                <h3 class="text-base font-bold text-johor-navy">Penunjuk PGK Johor</h3>
-                <p class="text-[11px] text-slate-500">Pendapatan Garis Kemiskinan Per Kapita</p>
-              </div>
-            </div>
-
-            <div class="space-y-3 mt-4">
-              <div class="p-3 rounded-xl bg-red-50 border border-red-200">
-                <div class="flex items-center justify-between font-bold text-xs text-red-800">
-                  <span>Miskin Tegar (Hardcore)</span>
-                  <span>&lt; RM 330</span>
-                </div>
-                <p class="text-[11px] text-red-700 mt-1">Keperluan asas makanan minimum tidak mencukupi.</p>
-              </div>
-
-              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
-                <div class="flex items-center justify-between font-bold text-xs text-amber-900">
-                  <span>Miskin (Absolute Poor)</span>
-                  <span>RM 331 - RM 600</span>
-                </div>
-                <p class="text-[11px] text-amber-800 mt-1">Di bawah perbelanjaan minimum taraf hidup wajar.</p>
-              </div>
-
-              <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-                <div class="flex items-center justify-between font-bold text-xs text-emerald-900">
-                  <span>Rentan / Terkeluar</span>
-                  <span>&gt; RM 601</span>
-                </div>
-                <p class="text-[11px] text-emerald-800 mt-1">Melepasi ambang garis kemiskinan asas.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-            <span>Rujukan:</span>
-            <span class="font-bold text-johor-navy">UPEN Johor &bull; DOSM</span>
+            <h2>Pangkalan Data Bancian Kemiskinan</h2>
+            <p>Carian, semakan status kelayakan PGK dan tindakan profil isi rumah[cite: 1].</p>
           </div>
         </div>
-      </div>
+        <div class="card">
+          <div style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
+            <input type="text" id="searchBox" placeholder="Cari Nama KIR, No KP, Daerah atau DUN..." oninput="renderRecordsTable()" style="flex:1; min-width:240px;">
+            <select id="selStrata" onchange="renderRecordsTable()" style="width:160px;">
+              <option value="">Semua Strata</option>
+              <option value="Bandar">Bandar</option>
+              <option value="Luar Bandar">Luar Bandar</option>
+            </select>
+            <select id="selPgk" onchange="renderRecordsTable()" style="width:180px;">
+              <option value="">Semua Status PGK</option>
+              <option value="Miskin (Bandar)">Miskin (Bandar)</option>
+              <option value="Miskin (Luar Bandar)">Miskin (Luar Bandar)</option>
+              <option value="Lepas PGK">Lepas PGK</option>
+            </select>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nama KIR</th>
+                  <th>No. KP</th>
+                  <th>Daerah & DUN</th>
+                  <th>Strata</th>
+                  <th>AIR</th>
+                  <th>Pendapatan Isi Rumah</th>
+                  <th>Per Kapita</th>
+                  <th>Status PGK</th>
+                  <th>Tindakan</th>
+                </tr>
+              </thead>
+              <tbody id="recordsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-      <!-- Recent Records Table on Dashboard -->
-      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2 mb-4">
+      <!-- TAB 3: LAPORAN -->
+      <section id="reports" class="page-section">
+        <div class="page-header">
           <div>
-            <h3 class="text-base sm:text-lg font-bold text-johor-navy flex items-center gap-2">
-              <i class="fa-solid fa-clock-rotate-left text-johor-blue"></i> Pendaftaran Bancian KIR Terkini
-            </h3>
-            <p class="text-xs text-slate-500">Rekod ketua isi rumah yang baru direkodkan ke dalam sistem</p>
+            <h2>Laporan Eksekutif & Eksport</h2>
+            <p>Dokumentasi cetakan rasmi dan analisa pemantauan SUK Johor.</p>
           </div>
-          <button onclick="switchTab('senarai')" class="text-xs font-bold text-johor-blue hover:text-johor-deepnavy flex items-center gap-1">
-            Lihat Semua Pangkalan Data <i class="fa-solid fa-arrow-right"></i>
-          </button>
+          <div>
+            <button class="btn btn-outline" onclick="window.print()">🖨 Cetak Laporan</button>
+            <button class="btn btn-johor" onclick="exportExcel()">⬇ Eksport Excel (.xlsx)</button>
+          </div>
         </div>
+        <div class="card">
+          <div class="card-title">Ringkasan Analisa Lapangan</div>
+          <div style="font-size:0.85rem; line-height:1.6; color:#334155;">
+            <p>Data bancian ini digunakan oleh <strong>Bahagian Pemantauan Projek dan Kesejahteraan Rakyat, Pejabat Setiausaha Kerajaan Johor</strong> bagi merangka intervensi bantuan modal insan, agihan bantuan agensi kerajaan, dan program pemerkasaan pendapatan isi rumah[cite: 1].</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs sm:text-sm">
-            <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold">
-              <tr>
-                <th class="px-3 py-2.5 rounded-l-lg">Nama KIR</th>
-                <th class="px-3 py-2.5">No. Kad Pengenalan</th>
-                <th class="px-3 py-2.5">Daerah & DUN</th>
-                <th class="px-3 py-2.5 text-center">AIR</th>
-                <th class="px-3 py-2.5 text-right">Pendapatan IR</th>
-                <th class="px-3 py-2.5 text-center">Kategori PGK</th>
-                <th class="px-3 py-2.5 text-center rounded-r-lg">Tindakan</th>
-              </tr>
-            </thead>
-            <tbody id="dash-recent-tbody" class="divide-y divide-slate-100">
-              <!-- Dynamically populated -->
-            </tbody>
-          </table>
-        </div>
+  <!-- MODAL BORANG BANCIAN -->
+  <div class="modal-overlay" id="modalForm">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 id="modalTitle">Borang Bancian Profil & Pemangkasan Kemiskinan</h3>
+        <button onclick="closeModal()" style="background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;">&times;</button>
       </div>
-    </section>
+      <div class="modal-body">
+        <form id="frmBanci" onsubmit="saveBanci(event)">
+          <input type="hidden" id="editId">
 
-    <!-- ==================== TAB 2: BORANG BANCIAN (INPUT FORM) ==================== -->
-    <section id="tab-daftar-content" class="tab-panel hidden space-y-6">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-slate-200 gap-4">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl bg-johor-navy text-amber-400 flex items-center justify-center text-xl font-bold shadow">
-              <i class="fa-solid fa-file-signature"></i>
+          <!-- BAHAGIAN A -->
+          <div class="form-section-title">A. MAKLUMAT KETUA DAN ASAS ISI RUMAH[cite: 1]</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nama Ketua Isi Rumah (KIR) *</label>
+              <input type="text" id="fNama" required>
+            </div>
+            <div class="form-group">
+              <label>No. Kad Pengenalan *</label>
+              <input type="text" id="fIc" placeholder="Contoh: 850101015555" required>
+            </div>
+            <div class="form-group">
+              <label>Umur (Tahun)</label>
+              <input type="number" id="fUmur" min="0">
+            </div>
+            <div class="form-group">
+              <label>Jantina</label>
+              <select id="fJantina">
+                <option value="Lelaki">Lelaki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Status Perkahwinan</label>
+              <select id="fKahwin">
+                <option value="Berkahwin">Berkahwin</option>
+                <option value="Bujang">Bujang</option>
+                <option value="Duda">Duda</option>
+                <option value="Janda">Janda</option>
+                <option value="Lain-lain">Lain-lain</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Daerah *</label>
+              <select id="fDaerah" required>
+                <option value="Johor Bahru">Johor Bahru</option>
+                <option value="Kulai">Kulai</option>
+                <option value="Pontian">Pontian</option>
+                <option value="Batu Pahat">Batu Pahat</option>
+                <option value="Kluang">Kluang</option>
+                <option value="Muar">Muar</option>
+                <option value="Tangkak">Tangkak</option>
+                <option value="Segamat">Segamat</option>
+                <option value="Kota Tinggi">Kota Tinggi</option>
+                <option value="Mersing">Mersing</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Mukim / DUN</label>
+              <input type="text" id="fDun" placeholder="Contoh: Mukim Plentong / DUN Stulang">
+            </div>
+            <div class="form-group">
+              <label>Strata * (Penentu PGK)</label>
+              <select id="fStrata" onchange="recalculateForm()" required>
+                <option value="Bandar">Bandar (PGK: ≤ RM830)</option>
+                <option value="Luar Bandar">Luar Bandar (PGK: ≤ RM677)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tahap Pendidikan Tertinggi</label>
+              <select id="fEdu">
+                <option value="SPM">SPM</option>
+                <option value="Tiada Pendidikan Formal">Tiada Pendidikan Formal</option>
+                <option value="Sekolah Rendah">Sekolah Rendah</option>
+                <option value="PT3/PMR">PT3/PMR</option>
+                <option value="STPM/Diploma">STPM/Diploma</option>
+                <option value="Ijazah">Ijazah</option>
+                <option value="Lain-lain">Lain-lain</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Pekerjaan KIR</label>
+              <input type="text" id="fKerja" placeholder="Contoh: Buruh Binaan / Peniaga Pasar">
+            </div>
+            <div class="form-group">
+              <label>Pendapatan Bulanan KIR (RM) *</label>
+              <input type="number" id="fIncome" min="0" step="0.01" value="0" oninput="recalculateForm()" required>
+            </div>
+            <div class="form-group">
+              <label>Kategori Produktiviti</label>
+              <select id="fProductivity">
+                <option value="Produktif">Produktif</option>
+                <option value="Tidak Produktif">Tidak Produktif</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>No. Telefon KIR</label>
+              <input type="text" id="fPhone">
+            </div>
+          </div>
+
+          <!-- BAHAGIAN B -->
+          <div class="form-section-title" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>B. MAKLUMAT AHLI ISI RUMAH (AIR)[cite: 1]</span>
+            <button type="button" class="btn btn-outline" style="padding:4px 8px; font-size:0.75rem;" onclick="addAirRow()">+ Tambah AIR</button>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nama AIR</th>
+                  <th>Hubungan</th>
+                  <th>Umur</th>
+                  <th>Pekerjaan</th>
+                  <th>Pendapatan (RM)</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="airTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- KOTAK PENGIRAAN REAL-TIME -->
+          <div class="calc-box">
+            <div>
+              <small>Pendapatan Isi Rumah</small>
+              <div id="liveTotalInc">RM 0.00</div>
             </div>
             <div>
-              <h2 class="text-lg sm:text-xl font-black text-johor-navy" id="form-mode-title">Daftar Bancian KIR Baharu</h2>
-              <p class="text-xs text-slate-500">Borang Bancian Profil dan Pemangkasan Kemiskinan Isi Rumah Negeri Johor</p>
+              <small>Jumlah Ahli (Termasuk KIR)</small>
+              <div id="liveTotalPax">1 Orang</div>
             </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <button type="button" onclick="resetForm()" class="px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition">
-              <i class="fa-solid fa-rotate-left"></i> Set Semula
-            </button>
-            <button type="button" onclick="document.getElementById('bancianForm').requestSubmit()" class="px-4 py-2 text-xs font-bold text-white bg-johor-blue hover:bg-johor-navy rounded-lg transition shadow flex items-center gap-2">
-              <i class="fa-solid fa-floppy-disk"></i> Simpan Penuh
-            </button>
-          </div>
-        </div>
-
-        <form id="bancianForm" onsubmit="handleFormSubmit(event)" class="mt-6 space-y-8">
-          <input type="hidden" id="recordId" value="">
-
-          <!-- BAHAGIAN A: MAKLUMAT KETUA DAN ASAS ISI RUMAH -->
-          <div class="bg-slate-50/70 border border-slate-200 rounded-2xl p-5 sm:p-6 space-y-4">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-              <h3 class="text-sm sm:text-base font-black text-johor-navy flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-johor-navy text-white text-xs inline-flex items-center justify-center">A</span>
-                Maklumat Ketua dan Asas Isi Rumah (KIR)
-              </h3>
-              <span class="text-xs font-medium text-rose-600">* Medan mandatori</span>
+            <div>
+              <small>Pendapatan Per Kapita</small>
+              <div id="livePerCapita">RM 0.00</div>
             </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <!-- Nama KIR -->
-              <div class="lg:col-span-2">
-                <label class="block text-xs font-bold text-slate-700 mb-1">1. Nama Ketua Isi Rumah (KIR) *</label>
-                <input type="text" id="kirNama" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue focus:border-johor-blue outline-none uppercase" placeholder="CONTOH: MOHD ROSLAN BIN IBRAHIM">
-              </div>
-
-              <!-- No KP -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">2. No. Kad Pengenalan *</label>
-                <input type="text" id="kirIc" required maxlength="14" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue focus:border-johor-blue outline-none" placeholder="780415-01-XXXX" oninput="formatIC(this)">
-              </div>
-
-              <!-- Umur -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">3. Umur (Tahun)</label>
-                <input type="number" id="kirUmur" min="15" max="110" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none" placeholder="Tahun">
-              </div>
-
-              <!-- Jantina -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">4. Jantina</label>
-                <select id="kirJantina" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none">
-                  <option value="">-- Sila Pilih --</option>
-                  <option value="Lelaki">Lelaki</option>
-                  <option value="Perempuan">Perempuan</option>
-                </select>
-              </div>
-
-              <!-- Status Perkahwinan -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">5. Status Perkahwinan</label>
-                <select id="kirKahwin" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none">
-                  <option value="">-- Sila Pilih --</option>
-                  <option value="Bujang">Bujang</option>
-                  <option value="Berkahwin">Berkahwin</option>
-                  <option value="Duda">Duda</option>
-                  <option value="Janda">Janda</option>
-                  <option value="Lain-lain">Lain-lain</option>
-                </select>
-              </div>
-
-              <!-- No Tel KIR -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">19. No. Telefon KIR</label>
-                <input type="tel" id="kirPhone" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none" placeholder="01X-XXXXXXX">
-              </div>
-
-              <!-- Alamat -->
-              <div class="lg:col-span-2">
-                <label class="block text-xs font-bold text-slate-700 mb-1">Alamat Tempat Tinggal</label>
-                <input type="text" id="kirAlamat" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none uppercase" placeholder="No Rumah, Jalan, Kampung / Taman">
-              </div>
-
-              <!-- 10 Daerah Johor -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Daerah Johor *</label>
-                <select id="kirDaerah" required onchange="populateDunOptions(this.value)" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none font-semibold text-johor-navy">
-                  <option value="">-- Pilih Daerah Johor --</option>
-                  <option value="Johor Bahru">Johor Bahru</option>
-                  <option value="Kulai">Kulai</option>
-                  <option value="Pontian">Pontian</option>
-                  <option value="Kota Tinggi">Kota Tinggi</option>
-                  <option value="Kluang">Kluang</option>
-                  <option value="Batu Pahat">Batu Pahat</option>
-                  <option value="Muar">Muar</option>
-                  <option value="Tangkak">Tangkak</option>
-                  <option value="Segamat">Segamat</option>
-                  <option value="Mersing">Mersing</option>
-                </select>
-              </div>
-
-              <!-- Mukim -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Mukim</label>
-                <input type="text" id="kirMukim" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none uppercase" placeholder="Contoh: Kesang / Plentong">
-              </div>
-
-              <!-- DUN Johor -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Dewan Undangan Negeri (DUN)</label>
-                <select id="kirDun" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none">
-                  <option value="">-- Sila Pilih Daerah Dahulu --</option>
-                </select>
-              </div>
-
-              <!-- Strata -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Strata</label>
-                <select id="kirStrata" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none">
-                  <option value="">-- Sila Pilih --</option>
-                  <option value="Bandar">Bandar</option>
-                  <option value="Luar Bandar">Luar Bandar</option>
-                </select>
-              </div>
-
-              <!-- Tahap Pendidikan Tertinggi -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">6. Tahap Pendidikan Tertinggi</label>
-                <select id="kirEdu" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none">
-                  <option value="">-- Sila Pilih --</option>
-                  <option value="Tiada Pendidikan Formal">Tiada Pendidikan Formal</option>
-                  <option value="Sekolah Rendah">Sekolah Rendah</option>
-                  <option value="PT3/PMR">PT3/PMR</option>
-                  <option value="SPM">SPM</option>
-                  <option value="STPM/Diploma">STPM/Diploma</option>
-                  <option value="Ijazah">Ijazah</option>
-                  <option value="Lain-lain">Lain-lain</option>
-                </select>
-              </div>
-
-              <!-- Status Pekerjaan -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">7. Status Pekerjaan</label>
-                <select id="kirKerjaStatus" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none">
-                  <option value="">-- Sila Pilih --</option>
-                  <option value="Bekerja">Bekerja</option>
-                  <option value="Tidak Bekerja">Tidak Bekerja</option>
-                  <option value="Bekerja Sendiri">Bekerja Sendiri</option>
-                  <option value="Pesara">Pesara</option>
-                  <option value="Lain-lain">Lain-lain</option>
-                </select>
-              </div>
-
-              <!-- Pekerjaan -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">8. Pekerjaan</label>
-                <input type="text" id="kirPekerjaan" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none" placeholder="Contoh: Nelayan / Pembantu Gerai">
-              </div>
-
-              <!-- Pendapatan KIR Sebulan -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">9. Pendapatan KIR Sebulan (RM) *</label>
-                <div class="relative">
-                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-bold text-xs">RM</span>
-                  <input type="number" step="0.01" min="0" id="kirIncome" required oninput="recalcIncomeCalculations()" class="w-full pl-10 pr-3 py-2 text-sm font-semibold text-johor-navy border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none" placeholder="0.00">
-                </div>
-              </div>
-
-              <!-- Status Kesihatan -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">10. Status Kesihatan</label>
-                <select id="kirKesihatan" onchange="toggleKirDisease(this.value)" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none">
-                  <option value="Tidak Kronik">Tidak Kronik</option>
-                  <option value="Kronik">Kronik</option>
-                </select>
-              </div>
-
-              <!-- Penyakit Kronik -->
-              <div id="kirDiseaseWrap" class="opacity-50">
-                <label class="block text-xs font-bold text-slate-700 mb-1">11. Jika Kronik, Nyatakan Penyakit</label>
-                <input type="text" id="kirPenyakit" disabled class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none" placeholder="Contoh: Strok / Dialisis Buah Pinggang">
-              </div>
-
-              <!-- Kategori Produktiviti -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">12. Kategori Produktiviti</label>
-                <select id="kirProduktiviti" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-johor-blue outline-none font-semibold">
-                  <option value="Produktif">Produktif (Boleh Bekerja / Dilatih)</option>
-                  <option value="Tidak Produktif">Tidak Produktif (Uzur / Warga Emas / OKU)</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Auto Calculation Live Banner -->
-            <div class="mt-4 p-4 rounded-xl bg-white border-2 border-johor-blue/20 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-johor-blue/10 text-johor-blue flex items-center justify-center font-black">
-                  <i class="fa-solid fa-calculator"></i>
-                </div>
-                <div>
-                  <h4 class="text-xs font-bold uppercase text-slate-500">Pengiraan Real-Time Garis Kemiskinan</h4>
-                  <p class="text-[11px] text-slate-400">Nilai dikira secara dinamik bersama data Ahli Isi Rumah (AIR)</p>
-                </div>
-              </div>
-
-              <div class="flex flex-wrap items-center gap-6 text-right">
-                <div>
-                  <span class="block text-[11px] font-semibold text-slate-500">20. Bilangan Ahli (AIR)</span>
-                  <span class="text-sm sm:text-base font-black text-johor-navy" id="calc-bil-air">1 Orang (KIR Sahaja)</span>
-                </div>
-                <div>
-                  <span class="block text-[11px] font-semibold text-slate-500">21. Pendapatan Isi Rumah</span>
-                  <span class="text-sm sm:text-base font-black text-johor-blue" id="calc-pendapatan-ir">RM 0.00</span>
-                </div>
-                <div>
-                  <span class="block text-[11px] font-semibold text-slate-500">22. Pendapatan Per Kapita</span>
-                  <span class="text-sm sm:text-base font-black text-johor-red" id="calc-per-kapita">RM 0.00</span>
-                </div>
-                <div>
-                  <span class="block text-[11px] font-semibold text-slate-500">Status PGK</span>
-                  <span id="calc-badge-pgk" class="inline-block px-3 py-1 text-xs font-black rounded-full bg-slate-200 text-slate-700">Belum Dikira</span>
-                </div>
-              </div>
+            <div>
+              <small>Status Kelayakan PGK</small>
+              <div id="liveStatus">-</div>
             </div>
           </div>
 
-          <div class="bg-slate-50/70 border border-slate-200 rounded-2xl p-5 sm:p-6 space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200 gap-2">
-              <div>
-                <h3 class="text-sm sm:text-base font-black text-johor-navy flex items-center gap-2">
-                  <span class="w-6 h-6 rounded-full bg-johor-navy text-white text-xs inline-flex items-center justify-center">B</span>
-                  Maklumat Ahli Isi Rumah (AIR) Yang Tinggal Bersama
-                </h3>
-                <p class="text-xs text-slate-500">Semua tanggungan serumah. Pendapatan AIR akan dicampur bagi mengira Pendapatan Kasar Isi Rumah.</p>
-              </div>
-              <button type="button" onclick="addAirRow()" class="px-3 py-2 text-xs font-bold text-white bg-johor-blue hover:bg-johor-deepnavy rounded-lg transition shrink-0 flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-user-plus"></i> Tambah Ahli (AIR)
-              </button>
+          <!-- BAHAGIAN C -->
+          <div class="form-section-title">C. MAKLUMAT BANTUAN YANG DITERIMA[cite: 1]</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Adakah Sedang Menerima Bantuan?[cite: 1]</label>
+              <select id="fHasHelp">
+                <option value="Tidak">Tidak</option>
+                <option value="Ya">Ya</option>
+              </select>
             </div>
-
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs">
-                <thead class="bg-slate-200/70 text-slate-700 uppercase font-bold text-[10px]">
-                  <tr>
-                    <th class="p-2 w-7 text-center">Bil</th>
-                    <th class="p-2 min-w-[140px]">Nama AIR</th>
-                    <th class="p-2 min-w-[120px]">No. Kad Pengenalan</th>
-                    <th class="p-2 w-16">Umur</th>
-                    <th class="p-2 min-w-[110px]">Hubungan KIR</th>
-                    <th class="p-2 min-w-[100px]">Status Kahwin</th>
-                    <th class="p-2 min-w-[120px]">Pekerjaan</th>
-                    <th class="p-2 w-28">Pendapatan (RM)</th>
-                    <th class="p-2 w-20 text-center">Kesihatan</th>
-                    <th class="p-2 min-w-[110px]">Penyakit Kronik</th>
-                    <th class="p-2 w-24 text-center">Produktiviti</th>
-                    <th class="p-2 w-10 text-center"></th>
-                  </tr>
-                </thead>
-                <tbody id="airTableBody" class="divide-y divide-slate-200 bg-white">
-                  <!-- Dynamic AIR rows inserted here -->
-                </tbody>
-              </table>
+            <div class="form-group">
+              <label>Agensi / Pemberi Bantuan (Jika Ada)[cite: 1]</label>
+              <input type="text" id="fHelpAgency" placeholder="Contoh: JKM / MAINJ / JKM">
+            </div>
+            <div class="form-group">
+              <label>Jumlah Bantuan Sebulan (RM)</label>
+              <input type="number" id="fHelpVal" min="0" step="0.01" value="0">
             </div>
           </div>
 
-          <div class="bg-slate-50/70 border border-slate-200 rounded-2xl p-5 sm:p-6 space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200 gap-2">
-              <div>
-                <h3 class="text-sm sm:text-base font-black text-johor-navy flex items-center gap-2">
-                  <span class="w-6 h-6 rounded-full bg-johor-navy text-white text-xs inline-flex items-center justify-center">C</span>
-                  Maklumat Bantuan Yang Diterima
-                </h3>
-                <p class="text-xs text-slate-500">Bantuan kerajaan persekutuan, MAIJ, SUK Johor mahupun NGO kebajikan</p>
-              </div>
+          <!-- BAHAGIAN D -->
+          <div class="form-section-title">D. MAKLUMAT KEMAHIRAN DAN POTENSI PENDAPATAN[cite: 1]</div>
+          <p style="font-size:0.75rem; color:var(--text-muted);">Tandakan kemahiran yang dimiliki oleh KIR atau AIR:[cite: 1]</p>
+          <div class="skills-grid" id="skillsContainer"></div>
 
-              <div class="flex items-center gap-3">
-                <label class="text-xs font-bold text-slate-700">1. Adakah menerima sebarang bantuan?</label>
-                <select id="hasHelpSelect" onchange="toggleHelpSection(this.value)" class="text-xs px-3 py-1.5 font-bold border border-slate-300 rounded-lg outline-none">
-                  <option value="Ya">Ya</option>
-                  <option value="Tidak">Tidak</option>
-                </select>
-              </div>
+          <!-- BAHAGIAN F -->
+          <div class="form-section-title">F. PENGESAHAN KETUA KAMPUNG[cite: 1]</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nama Ketua Kampung / Penghulu[cite: 1]</label>
+              <input type="text" id="fKkName">
             </div>
-
-            <div id="helpSectionContent" class="space-y-4">
-              <div class="flex justify-end">
-                <button type="button" onclick="addHelpRow()" class="px-3 py-1.5 text-xs font-bold text-johor-blue bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition flex items-center gap-1">
-                  <i class="fa-solid fa-plus"></i> Tambah Bantuan
-                </button>
-              </div>
-
-              <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                  <thead class="bg-slate-200/70 text-slate-700 uppercase font-bold text-[10px]">
-                    <tr>
-                      <th class="p-2 w-7 text-center">Bil</th>
-                      <th class="p-2 min-w-[150px]">Jenis Bantuan</th>
-                      <th class="p-2 min-w-[150px]">Agensi / Pemberi</th>
-                      <th class="p-2 min-w-[130px]">Penerima</th>
-                      <th class="p-2 w-32">Kekerapan</th>
-                      <th class="p-2 w-28">Nilai Bantuan (RM)</th>
-                      <th class="p-2 w-10 text-center"></th>
-                    </tr>
-                  </thead>
-                  <tbody id="helpTableBody" class="divide-y divide-slate-200 bg-white">
-                    <!-- Dynamic assistance rows -->
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- Breakdown totals according to CADANGAN BORANG KEMISKINAN -->
-              <div class="bg-white p-4 rounded-xl border border-slate-200 mt-3">
-                <h4 class="text-xs font-black uppercase text-johor-navy mb-2">3. Jumlah Keseluruhan Bantuan Diterima (RM)</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
-                  <div class="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200">
-                    <span class="block text-[11px] font-bold text-emerald-800 uppercase">Bulanan</span>
-                    <span class="text-sm font-black text-emerald-900" id="totalHelpMonthly">RM 0.00</span>
-                  </div>
-                  <div class="p-2.5 rounded-lg bg-blue-50 border border-blue-200">
-                    <span class="block text-[11px] font-bold text-blue-800 uppercase">Tahunan</span>
-                    <span class="text-sm font-black text-blue-900" id="totalHelpYearly">RM 0.00</span>
-                  </div>
-                  <div class="p-2.5 rounded-lg bg-amber-50 border border-amber-200">
-                    <span class="block text-[11px] font-bold text-amber-800 uppercase">One-Off</span>
-                    <span class="text-sm font-black text-amber-900" id="totalHelpOneOff">RM 0.00</span>
-                  </div>
-                </div>
-              </div>
+            <div class="form-group">
+              <label>No. Telefon Ketua Kampung[cite: 1]</label>
+              <input type="text" id="fKkPhone">
+            </div>
+            <div class="form-group">
+              <label>Tarikh Bancian[cite: 1]</label>
+              <input type="date" id="fKkDate">
             </div>
           </div>
 
-          <div class="bg-slate-50/70 border border-slate-200 rounded-2xl p-5 sm:p-6 space-y-4">
-            <div class="pb-3 border-b border-slate-200">
-              <h3 class="text-sm sm:text-base font-black text-johor-navy flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-johor-navy text-white text-xs inline-flex items-center justify-center">D</span>
-                Maklumat Kemahiran dan Potensi Pendapatan
-              </h3>
-              <p class="text-xs text-slate-500">Rujukan pemadanan modal pemula Maju Johor / program kemahiran TVET Negeri</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">1. Mempunyai kemahiran menjana pendapatan?</label>
-                <select id="hasSkillSelect" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none">
-                  <option value="Ya">Ya</option>
-                  <option value="Tidak">Tidak</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">3. Pernah menjana pendapatan drpd kemahiran?</label>
-                <select id="skillIncomeGenerated" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none">
-                  <option value="Ya">Ya</option>
-                  <option value="Tidak">Tidak</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Jika Ya, Anggaran Pendapatan (RM / Bulan)</label>
-                <div class="relative">
-                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-bold text-xs">RM</span>
-                  <input type="number" step="0.01" min="0" id="skillMonthlyEst" class="w-full pl-10 pr-3 py-2 text-sm border border-slate-300 rounded-lg outline-none" placeholder="0.00">
-                </div>
-              </div>
-            </div>
-
-            <!-- List of 20 Skills Checkboxes -->
-            <div class="pt-2">
-              <label class="block text-xs font-black text-slate-700 mb-2">2. Kemahiran Yang Dimiliki (Tandakan semua yang berkenaan):</label>
-              <div id="skillsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 p-3 bg-white rounded-xl border border-slate-200">
-                <!-- 20 skills checkboxes loaded dynamically -->
-              </div>
-
-              <div class="mt-3">
-                <label class="block text-xs font-bold text-slate-600 mb-1">Lain-lain kemahiran (jika ada):</label>
-                <input type="text" id="skillOthers" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none uppercase" placeholder="Nyatakan sekiranya tiada dalam senarai di atas">
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-slate-50/70 border border-slate-200 rounded-2xl p-5 sm:p-6 space-y-4">
-            <div class="pb-3 border-b border-slate-200">
-              <h3 class="text-sm sm:text-base font-black text-johor-navy flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-johor-navy text-white text-xs inline-flex items-center justify-center">F</span>
-                Pengesahan Ketua Kampung / Penghulu Mukim
-              </h3>
-              <p class="text-xs text-slate-500 italic">"Saya mengesahkan bahawa maklumat yang diberikan adalah berdasarkan pengetahuan dan maklumat terkini berkaitan isi rumah berkenaan dan adalah benar setakat yang diketahui."</p>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Nama Ketua Kampung / Penghulu *</label>
-                <input type="text" id="kkNama" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none uppercase" placeholder="NAMA PENUH KETUA KAMPUNG">
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">No. Telefon</label>
-                <input type="tel" id="kkPhone" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none" placeholder="01X-XXXXXXX">
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Tarikh Banci / Pengesahan</label>
-                <input type="date" id="kkTarikh" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none">
-              </div>
-            </div>
-
-            <!-- Field Photo Upload / Evidence Preview -->
-            <div class="pt-2">
-              <label class="block text-xs font-bold text-slate-700 mb-1">Bukti Bergambar (Lawatan Tapak / Keadaan Rumah / KIR):</label>
-              <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <label class="cursor-pointer bg-white px-4 py-2 border-2 border-dashed border-johor-blue/40 hover:border-johor-blue rounded-xl text-xs font-bold text-johor-blue flex items-center gap-2 shadow-sm transition">
-                  <i class="fa-solid fa-camera"></i> Muat Naik / Tangkap Gambar
-                  <input type="file" id="evidencePhotoInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
-                </label>
-                <button type="button" id="removePhotoBtn" onclick="removeFieldPhoto()" class="hidden text-xs text-rose-600 hover:underline">
-                  <i class="fa-solid fa-trash"></i> Buang Gambar
-                </button>
-              </div>
-
-              <div id="photoPreviewContainer" class="mt-3 hidden">
-                <img id="photoPreview" src="" alt="Bukti Bergambar Lawatan" class="w-48 h-32 object-cover rounded-xl border-2 border-johor-gold shadow">
-              </div>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-slate-200">
-            <button type="button" onclick="switchTab('senarai')" class="w-full sm:w-auto px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
-              Batal
-            </button>
-            <button type="submit" class="w-full sm:w-auto px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-johor-red hover:bg-johor-darkred rounded-xl shadow-md transition flex items-center justify-center gap-2">
-              <i class="fa-solid fa-check-double"></i> Sahkan & Simpan Profil KIR
-            </button>
+          <div class="modal-footer" style="padding:16px 0 0 0; background:none;">
+            <button type="button" class="btn btn-outline" onclick="closeModal()">Batal</button>
+            <button type="submit" class="btn btn-red">💾 Simpan Rekod Bancian</button>
           </div>
         </form>
-      </div>
-    </section>
-
-    <!-- ==================== TAB 3: PANGKALAN REKOD & CARIAN ==================== -->
-    <section id="tab-senarai-content" class="tab-panel hidden space-y-6">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-200 gap-4">
-          <div>
-            <h2 class="text-lg sm:text-xl font-black text-johor-navy flex items-center gap-2">
-              <i class="fa-solid fa-folder-open text-johor-gold"></i> Pangkalan Data Bancian KIR Johor
-            </h2>
-            <p class="text-xs text-slate-500">Carian menyeluruh, tapisan mengikut daerah, cetakan profil rasmi & pengemaskinian data</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <button onclick="openNewForm()" class="px-4 py-2 text-xs font-bold text-white bg-johor-red hover:bg-johor-darkred rounded-lg transition shadow flex items-center gap-1.5">
-              <i class="fa-solid fa-user-plus"></i> Tambah KIR
-            </button>
-            <button onclick="exportExcelFull()" class="px-3.5 py-2 text-xs font-bold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 rounded-lg transition flex items-center gap-1.5">
-              <i class="fa-solid fa-file-excel"></i> Eksport Excel
-            </button>
-          </div>
-        </div>
-
-        <!-- Filter bar -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-4">
-          <div class="lg:col-span-2 relative">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
-            <input type="text" id="searchInput" oninput="renderRecordsTable()" class="w-full pl-8 pr-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-johor-blue" placeholder="Cari Nama KIR, No KP, Telefon, Mukim atau DUN...">
-          </div>
-          <div>
-            <select id="filterDistrict" onchange="renderRecordsTable()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-johor-blue font-medium">
-              <option value="">-- Semua Daerah Johor --</option>
-              <option value="Johor Bahru">Johor Bahru</option>
-              <option value="Kulai">Kulai</option>
-              <option value="Pontian">Pontian</option>
-              <option value="Kota Tinggi">Kota Tinggi</option>
-              <option value="Kluang">Kluang</option>
-              <option value="Batu Pahat">Batu Pahat</option>
-              <option value="Muar">Muar</option>
-              <option value="Tangkak">Tangkak</option>
-              <option value="Segamat">Segamat</option>
-              <option value="Mersing">Mersing</option>
-            </select>
-          </div>
-          <div>
-            <select id="filterPoverty" onchange="renderRecordsTable()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-johor-blue font-medium">
-              <option value="">-- Semua Status PGK --</option>
-              <option value="Miskin Tegar">Miskin Tegar (&lt; RM330)</option>
-              <option value="Miskin">Miskin (RM331 - RM600)</option>
-              <option value="Rentan">Rentan / Terkeluar</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Records Table -->
-        <div class="overflow-x-auto mt-4 rounded-xl border border-slate-200">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-johor-deepnavy text-white uppercase text-[10px] tracking-wider font-bold">
-              <tr>
-                <th class="p-3">Nama KIR</th>
-                <th class="p-3">No. Kad Pengenalan</th>
-                <th class="p-3">Daerah & DUN</th>
-                <th class="p-3 text-center">AIR</th>
-                <th class="p-3 text-right">Pendapatan IR</th>
-                <th class="p-3 text-right">Per Kapita</th>
-                <th class="p-3 text-center">Status Kemiskinan</th>
-                <th class="p-3 text-center">Bantuan</th>
-                <th class="p-3 text-center">Tindakan</th>
-              </tr>
-            </thead>
-            <tbody id="fullRecordsTableBody" class="divide-y divide-slate-200 bg-white">
-              <!-- Rendered via JS -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==================== TAB 4: LAPORAN & PENJANAAN ==================== -->
-    <section id="tab-laporan-content" class="tab-panel hidden space-y-6">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <div class="pb-4 border-b border-slate-200">
-          <h2 class="text-lg sm:text-xl font-black text-johor-navy flex items-center gap-2">
-            <i class="fa-solid fa-file-lines text-johor-red"></i> Laporan Rasmi & Eksport Penilaian Kemiskinan
-          </h2>
-          <p class="text-xs text-slate-500">Penyediaan data bagi Mesyuarat Jawatankuasa Tindakan Pembangunan Negeri Johor (JTPN)</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          <!-- Excel Generation Card -->
-          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
-            <div>
-              <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-xl font-bold mb-3">
-                <i class="fa-solid fa-file-excel"></i>
-              </div>
-              <h3 class="text-base font-bold text-slate-800">Eksport Buku Kerja Excel (.xlsx)</h3>
-              <p class="text-xs text-slate-500 mt-1">
-                Format lengkap 3 helaian mengikut tatacara SUK Johor: <strong>Senarai KIR</strong>, <strong>Ahli Tanggungan (AIR)</strong>, dan <strong>Bantuan Diterima</strong>.
-              </p>
-            </div>
-            <div class="mt-5">
-              <button onclick="exportExcelFull()" class="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition shadow flex items-center justify-center gap-2">
-                <i class="fa-solid fa-download"></i> Jana dan Muat Turun Fail Excel
-              </button>
-            </div>
-          </div>
-
-          <!-- Printable Executive Summary Card -->
-          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
-            <div>
-              <div class="w-12 h-12 rounded-xl bg-johor-navy text-amber-300 flex items-center justify-center text-xl font-bold mb-3">
-                <i class="fa-solid fa-print"></i>
-              </div>
-              <h3 class="text-base font-bold text-slate-800">Cetak Laporan Eksekutif Negeri</h3>
-              <p class="text-xs text-slate-500 mt-1">
-                Jana dokumen cetakan format A4 standard kerajaan negeri lengkap dengan kepala surat rasmi, Jata Johor & Logo Maju Johor.
-              </p>
-            </div>
-            <div class="mt-5">
-              <button onclick="printExecutiveReport()" class="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-johor-navy hover:bg-johor-deepnavy transition shadow flex items-center justify-center gap-2">
-                <i class="fa-solid fa-file-pdf"></i> Cetak / Simpan PDF Eksekutif
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Human capital summary stats -->
-        <div class="mt-8 pt-6 border-t border-slate-200">
-          <h3 class="text-xs sm:text-sm font-bold text-johor-navy uppercase tracking-wider mb-4">Ringkasan Taburan Modal Insan & Produktiviti</h3>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-            <div class="p-4 rounded-xl bg-slate-100/70 border border-slate-200">
-              <span class="block text-xs font-semibold text-slate-500">Jumlah Isi Rumah (KIR)</span>
-              <span class="text-2xl font-black text-johor-navy" id="rep-total-kir">0</span>
-            </div>
-            <div class="p-4 rounded-xl bg-slate-100/70 border border-slate-200">
-              <span class="block text-xs font-semibold text-slate-500">Jumlah Tanggungan (AIR)</span>
-              <span class="text-2xl font-black text-johor-blue" id="rep-total-air">0</span>
-            </div>
-            <div class="p-4 rounded-xl bg-slate-100/70 border border-slate-200">
-              <span class="block text-xs font-semibold text-slate-500">KIR Produktif</span>
-              <span class="text-2xl font-black text-emerald-700" id="rep-prod-kir">0</span>
-            </div>
-            <div class="p-4 rounded-xl bg-slate-100/70 border border-slate-200">
-              <span class="block text-xs font-semibold text-slate-500">KIR Tidak Produktif</span>
-              <span class="text-2xl font-black text-rose-700" id="rep-nonprod-kir">0</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <div id="profileModal" class="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto border-2 border-johor-gold">
-      
-      <!-- Modal Header (Controls) -->
-      <div class="p-4 bg-johor-navy text-white flex items-center justify-between no-print border-b border-johor-gold/40">
-        <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 rounded bg-johor-gold text-johor-navy font-black text-xs">SUK JOHOR</span>
-          <h3 class="text-sm sm:text-base font-bold text-white">Kad Profil Rasmi Bancian Isi Rumah</h3>
-        </div>
-        <div class="flex items-center gap-2">
-          <button onclick="printIndividualRecord()" class="px-3.5 py-1.5 bg-johor-red hover:bg-johor-darkred text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow">
-            <i class="fa-solid fa-print"></i> Cetak Kad Profil A4
-          </button>
-          <button onclick="closeProfileModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold">
-            &times;
-          </button>
-        </div>
-      </div>
-
-      <!-- Printable Document Canvas with Jata Johor on the Left and Maju Johor on the Right -->
-      <div id="printableContent" class="p-6 sm:p-8 overflow-y-auto text-slate-800 bg-white">
-        
-        <!-- Official Johor Header in Print Document showing BOTH LOGOS -->
-        <div class="border-b-2 border-slate-900 pb-4 mb-6 flex items-center justify-between gap-4">
-          
-          <!-- LOGO 1: Jata Negeri Johor -->
-          <div class="w-20 h-20 shrink-0">
-            <svg class="w-full h-full" viewBox="0 0 700 700" fill="none">
-              <!-- Crown Base -->
-              <path d="M250 180 Q350 145 450 180 L440 225 Q350 205 260 225 Z" fill="#0C2340" stroke="#C59B27" stroke-width="8"/>
-              <circle cx="350" cy="170" r="16" fill="#D4AF37"/>
-              <path d="M350 115 A18 18 0 1 0 350 150 A14 14 0 1 1 350 120 Z" fill="#D4AF37"/>
-              <polygon points="350,110 353,119 362,119 355,124 357,133 350,128 343,133 345,124 338,119 347,119" fill="#D4AF37"/>
-              <!-- Tigers -->
-              <path d="M150 170 Q190 180 210 240 Q165 290 140 370 Q160 410 110 490 L130 505 Q190 470 230 430 Q240 340 250 270 Q215 240 185 240 Z" fill="#F59E0B" stroke="#B45309" stroke-width="4"/>
-              <path d="M550 170 Q510 180 490 240 Q535 290 560 370 Q540 410 590 490 L570 505 Q510 470 470 430 Q460 340 450 270 Q485 240 515 240 Z" fill="#F59E0B" stroke="#B45309" stroke-width="4"/>
-              <!-- Shield -->
-              <path d="M255 260 L445 260 L425 450 Q350 510 350 510 Q275 450 255 450 Z" fill="#FFFFFF" stroke="#0C2340" stroke-width="12"/>
-              <path d="M350 330 A45 45 0 1 0 350 420 A36 36 0 1 1 350 340 Z" fill="#D4AF37"/>
-              <polygon points="350,345 355,360 371,360 358,370 363,385 350,375 337,385 342,370 329,360 345,360" fill="#D4AF37"/>
-              <!-- Ribbon -->
-              <path d="M120 535 Q350 630 580 535 L565 595 Q350 690 135 595 Z" fill="#0C2340" stroke="#D4AF37" stroke-width="7"/>
-              <text x="350" y="610" font-family="'Amiri', serif" font-size="44" font-weight="bold" fill="#F59E0B" text-anchor="middle">کڤد الله برکره</text>
-            </svg>
-          </div>
-
-          <!-- Middle Official Titles -->
-          <div class="text-center flex-1">
-            <h2 class="text-base sm:text-lg font-black text-johor-deepnavy tracking-wide">KERAJAAN NEGERI JOHOR DARUL TA'ZIM</h2>
-            <h3 class="text-xs sm:text-sm font-bold text-slate-800">PEJABAT SETIAUSAHA KERAJAAN JOHOR (SUK JOHOR)</h3>
-            <p class="text-[11px] text-slate-600 font-semibold">UNIT PERANCANG EKONOMI NEGERI &bull; SISTEM e-BANCI KASIH JOHOR</p>
-            <p class="text-[10px] text-slate-500 uppercase tracking-widest mt-0.5">BORANG BANCIAN PROFIL DAN PEMANGKASAN KEMISKINAN ISI RUMAH</p>
-          </div>
-
-          <!-- LOGO 2: Maju Johor Hexagonal Emblem -->
-          <div class="w-16 h-20 shrink-0 flex items-center justify-center">
-            <svg class="w-full h-full" viewBox="0 0 300 346.41" xmlns="http://www.w3.org/2000/svg">
-              <polygon points="150,0 300,86.6 300,259.8 150,346.41 0,259.8 0,86.6" fill="#A0AEC0"/>
-              <g clip-path="url(#headerMajuClip)">
-                <rect x="0" y="0" width="300" height="346.41" fill="#C51F24" />
-                <path d="M0,180 C80,140 180,220 300,150 L300,346.41 L0,346.41 Z" fill="#0C2340"/>
-                <path d="M150,55 A45,45 0 1,0 150,155 A35,35 0 1,1 150,65 Z" fill="#FFFFFF"/>
-                <polygon points="168,75 174,96 195,96 178,109 184,130 168,117 151,130 157,109 140,96 162,96" fill="#FFFFFF"/>
-                <text x="150" y="242" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="34" fill="#FFFFFF" text-anchor="middle">MAJU</text>
-                <text x="150" y="278" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="34" fill="#FFFFFF" text-anchor="middle">JOHOR</text>
-              </g>
-            </svg>
-          </div>
-        </div>
-
-        <!-- Document Metadata Header -->
-        <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
-          <div class="text-[11px] text-slate-500 font-mono" id="modal-doc-id">NO. DAFTAR: JHR-XXXX</div>
-          <div id="modal-pgk-badge" class="inline-block px-3 py-1 text-xs font-black uppercase rounded border">STATUS</div>
-        </div>
-
-        <div id="profileBodyDynamic" class="space-y-6 text-xs">
-          <!-- Dynamic Individual details injected here -->
-        </div>
-
-        <!-- Official Signatures in Document -->
-        <div class="mt-8 pt-6 border-t border-slate-300 grid grid-cols-2 gap-8 text-center text-xs">
-          <div>
-            <p class="text-slate-500 mb-12">Pegawai / Ketua Kampung Pembanci:</p>
-            <p class="font-bold border-t border-slate-400 pt-1" id="modal-sign-kk">Nama Ketua Kampung</p>
-            <p class="text-[10px] text-slate-500">Tandatangan & Cop Ketua Kampung</p>
-          </div>
-          <div>
-            <p class="text-slate-500 mb-12">Disahkan Oleh Pegawai Daerah / SUK Johor:</p>
-            <p class="font-bold border-t border-slate-400 pt-1">b.p. Setiausaha Kerajaan Johor</p>
-            <p class="text-[10px] text-slate-500">Bahagian Pembasmian Kemiskinan UPEN</p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
 
-  <footer class="bg-johor-deepnavy text-slate-400 text-xs py-6 border-t-2 border-johor-gold mt-auto no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-white p-0.5 border border-johor-gold flex items-center justify-center">
-          <svg class="w-full h-full" viewBox="0 0 700 700" fill="none">
-            <path d="M250 180 Q350 145 450 180 L440 225 Q350 205 260 225 Z" fill="#0C2340"/>
-            <path d="M255 260 L445 260 L425 450 Q350 510 350 510 Q275 450 255 450 Z" fill="#FFFFFF" stroke="#0C2340" stroke-width="15"/>
-            <path d="M350 330 A45 45 0 1 0 350 420 A36 36 0 1 1 350 340 Z" fill="#D4AF37"/>
-          </svg>
-        </div>
-        <div>
-          <p class="text-white font-bold">Hak Cipta Terpelihara &copy; 2026 Pejabat Setiausaha Kerajaan Johor</p>
-          <p class="text-[11px] text-slate-400">Aras 1, Bangunan Dato' Jaafar Muhammad, Kota Iskandar, 79000 Iskandar Puteri, Johor Darul Ta'zim.</p>
-        </div>
-      </div>
-      <div class="flex items-center gap-4 text-[11px]">
-        <span class="text-slate-300">Unit Perancang Ekonomi Negeri</span>
-        <span>&bull;</span>
-        <span class="text-amber-300 font-semibold">Maju Johor 2030</span>
-      </div>
-    </div>
+  <footer class="site-footer">
+    &copy; 2026 Bahagian Pemantauan Projek dan Kesejahteraan Rakyat, Pejabat Setiausaha Kerajaan Johor. Hak Cipta Terpelihara.
   </footer>
 
   <script>
-    // 20 Standard Skills list from CADANGAN BORANG KEMISKINAN
+    const DISTRICTS = ['Johor Bahru', 'Kulai', 'Pontian', 'Batu Pahat', 'Kluang', 'Muar', 'Tangkak', 'Segamat', 'Kota Tinggi', 'Mersing'];
+    
     const SKILLS_LIST = [
-      "Memasak / Penyediaan Makanan",
-      "Menjahit / Mengubah Pakaian",
-      "Bakeri / Kuih-Muih",
-      "Pertukangan / Kerja Kayu",
-      "Kerja Pembinaan",
-      "Pendawaian Elektrik",
-      "Paip / Plumbing",
-      "Mekanik / Membaiki Kenderaan",
-      "Pertanian / Perkebunan",
-      "Penternakan",
-      "Perikanan",
-      "Perniagaan / Jualan",
-      "Dandanan / Kecantikan",
-      "Pengasuhan Kanak-Kanak",
-      "Pembaikan Peralatan Elektrik",
-      "Komputer / Teknologi Maklumat",
-      "Kraftangan",
-      "Fotografi / Videografi",
-      "Pemanduan / Pengangkutan"
+      "Memasak / Penyediaan Makanan", "Menjahit / Mengubah Pakaian", "Bakeri / Kuih-Muih", 
+      "Pertukangan / Kerja Kayu", "Kerja Pembinaan", "Pendawaian Elektrik", 
+      "Paip / Plumbing", "Mekanik / Membaiki Kenderaan", "Pertanian / Perkebunan", 
+      "Penternakan", "Perikanan", "Perniagaan / Jualan", "Dandanan / Kecantikan", 
+      "Pengasuhan Kanak-Kanak", "Pembaikan Peralatan Elektrik", "Komputer / IT", 
+      "Kraftangan", "Fotografi / Videografi", "Pemanduan / Pengangkutan"
+    ]; //[cite: 1]
+
+    // DATA PROTOTYPE CONTOH UNTUK DEMO AWAL
+    const SAMPLE_RECORDS = [
+      {
+        id: "rec-01",
+        nama: "Mohd Fauzi Bin Ahmad",
+        ic: "780415015243",
+        umur: 48,
+        jantina: "Lelaki",
+        kahwin: "Berkahwin",
+        daerah: "Johor Bahru",
+        dun: "DUN Larkin",
+        strata: "Bandar",
+        edu: "SPM",
+        kerja: "Pengawal Keselamatan",
+        incomeKir: 1600,
+        air: [
+          { nama: "Siti Aminah", hubungan: "Isteri", umur: 45, kerja: "Suri Rumah", inc: 0 },
+          { nama: "Nurul Huda", hubungan: "Anak", umur: 16, kerja: "Pelajar", inc: 0 },
+          { nama: "Muhammad Arif", hubungan: "Anak", umur: 12, kerja: "Pelajar", inc: 0 }
+        ],
+        totalInc: 1600,
+        perCapita: 400.00, // 1600 / 4 = 400 (<= 830 -> Miskin Bandar)
+        statusPGK: "Miskin (Bandar)",
+        hasHelp: "Ya",
+        helpAgency: "JKM",
+        helpVal: 300,
+        productivity: "Produktif",
+        phone: "013-7891234",
+        skills: ["Memasak / Penyediaan Makanan", "Pemanduan / Pengangkutan"],
+        kkName: "Hj. Daud Ismail",
+        kkPhone: "019-7112233",
+        kkDate: "2026-02-15"
+      },
+      {
+        id: "rec-02",
+        nama: "Rosli Bin Ramli",
+        ic: "810920016781",
+        umur: 45,
+        jantina: "Lelaki",
+        kahwin: "Berkahwin",
+        daerah: "Batu Pahat",
+        dun: "DUN Semerah",
+        strata: "Luar Bandar",
+        edu: "PMR",
+        kerja: "Penoreh Getah",
+        incomeKir: 1100,
+        air: [
+          { nama: "Zaleha Binti Kassim", hubungan: "Isteri", umur: 42, kerja: "Membuat Kuih", inc: 350 },
+          { nama: "Aiman Hafiz", hubungan: "Anak", umur: 14, kerja: "Pelajar", inc: 0 }
+        ],
+        totalInc: 1450,
+        perCapita: 483.33, // 1450 / 3 = 483.33 (<= 677 -> Miskin Luar Bandar)
+        statusPGK: "Miskin (Luar Bandar)",
+        hasHelp: "Ya",
+        helpAgency: "MAINJ",
+        helpVal: 250,
+        productivity: "Produktif",
+        phone: "017-7654321",
+        skills: ["Bakeri / Kuih-Muih", "Pertanian / Perkebunan"],
+        kkName: "En. Salleh Bin Omar",
+        kkPhone: "012-7894561",
+        kkDate: "2026-03-01"
+      },
+      {
+        id: "rec-03",
+        nama: "Kamalul Ariffin Bin Zainal",
+        ic: "860312015509",
+        umur: 40,
+        jantina: "Lelaki",
+        kahwin: "Berkahwin",
+        daerah: "Pontian",
+        dun: "DUN Kukup",
+        strata: "Luar Bandar",
+        edu: "STPM/Diploma",
+        kerja: "Penyelia Tapak",
+        incomeKir: 2800,
+        air: [
+          { nama: "Faridah Binti Ali", hubungan: "Isteri", umur: 38, kerja: "Kerani", inc: 1500 },
+          { nama: "Danish Irfan", hubungan: "Anak", umur: 8, kerja: "Pelajar", inc: 0 }
+        ],
+        totalInc: 4300,
+        perCapita: 1433.33, // 4300 / 3 = 1433.33 (> 677 -> Lepas PGK)
+        statusPGK: "Lepas PGK",
+        hasHelp: "Tidak",
+        helpAgency: "-",
+        helpVal: 0,
+        productivity: "Produktif",
+        phone: "011-23456789",
+        skills: ["Kerja Pembinaan", "Pendawaian Elektrik"],
+        kkName: "Hj. Hashim",
+        kkPhone: "013-7766554",
+        kkDate: "2026-03-05"
+      },
+      {
+        id: "rec-04",
+        nama: "Halimah Binti Yusof",
+        ic: "680711015332",
+        umur: 58,
+        jantina: "Perempuan",
+        kahwin: "Janda",
+        daerah: "Muar",
+        dun: "DUN Maharani",
+        strata: "Bandar",
+        edu: "Sekolah Rendah",
+        kerja: "Pembantu Kedai Makan",
+        incomeKir: 1100,
+        air: [
+          { nama: "Nur Azlina", hubungan: "Anak", umur: 20, kerja: "Tidak Bekerja", inc: 0 }
+        ],
+        totalInc: 1100,
+        perCapita: 550.00, // 1100 / 2 = 550 (<= 830 -> Miskin Bandar)
+        statusPGK: "Miskin (Bandar)",
+        hasHelp: "Ya",
+        helpAgency: "JKM",
+        helpVal: 350,
+        productivity: "Tidak Produktif",
+        phone: "019-7098765",
+        skills: ["Memasak / Penyediaan Makanan", "Menjahit / Mengubah Pakaian"],
+        kkName: "Tn. Hj. Mokhtar",
+        kkPhone: "012-7123987",
+        kkDate: "2026-02-28"
+      }
     ];
 
-    // Johor DUNs mapped by 10 Districts
-    const JOHOR_DUNS = {
-      "Johor Bahru": ["N40 Tiram", "N41 Puteri Wangsa", "N44 Larkin", "N45 Stulang", "N46 Perling", "N47 Kempas", "N48 Skudai"],
-      "Kulai": ["N50 Bukit Permai", "N51 Bukit Batu", "N52 Senai"],
-      "Pontian": ["N53 Benut", "N54 Pulai Sebatang", "N55 Pekan Nanas", "N56 Kukup"],
-      "Kota Tinggi": ["N34 Panti", "N35 Pasir Raja", "N36 Sedili", "N37 Johor Lama", "N38 Penawar", "N39 Tanjung Surat"],
-      "Kluang": ["N28 Mengkibol", "N29 Mahkota", "N30 Paloh", "N31 Kahang", "N32 Layang-Layang", "N33 Machap"],
-      "Batu Pahat": ["N23 Penggaram", "N24 Senggarang", "N25 Rengit", "N19 Sri Medan", "N20 Semarang", "N21 Parit Yaani", "N22 Parit Raja"],
-      "Muar": ["N12 Bentayan", "N13 Simpang Jeram", "N14 Bukit Pasir", "N15 Maharani", "N16 Sungai Balang"],
-      "Tangkak": ["N09 Gambir", "N10 Tangkak", "N11 Serom"],
-      "Segamat": ["N01 Buloh Kasap", "N02 Jementah", "N03 Pemanis", "N04 Kemelah", "N05 Tenang", "N06 Bekok"],
-      "Mersing": ["N33 Endau", "N34 Tenggaroh"]
-    };
+    let records = JSON.parse(localStorage.getItem('ebanci_johor_proto_db')) || SAMPLE_RECORDS;
 
-    // Pangkalan Data Pengeluaran (Production Ready) - Bermula bersih tanpa sebarang data contoh
-    const DEFAULT_DATA = [];
-
-    let records = [];
-    let currentPhotoBase64 = "";
-
-    window.addEventListener('DOMContentLoaded', () => {
-      // Dapatkan data daripada LocalStorage pelayar jika pernah dimasukkan sebelum ini
-      const stored = localStorage.getItem('eBanciKasihJohor_data');
-      if (stored) {
-        try {
-          records = JSON.parse(stored);
-        } catch (e) {
-          records = [];
-        }
-      } else {
-        records = [];
-      }
-
-      // Paparan tarikh rasmi masa nyata
-      const dateEl = document.getElementById('currentDateDisplay');
-      if (dateEl) {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateEl.textContent = new Date().toLocaleDateString('ms-MY', options);
-      }
-
-      // Bina senarai semak 20 kemahiran
-      renderSkillsGrid();
-
-      // Kemaskini statistik dan jadual (semua bermula dari 0)
-      updateDashboardStats();
-      renderRecordsTable();
-      renderReportsView();
-    });
-
-    function saveState() {
-      localStorage.setItem('eBanciKasihJohor_data', JSON.stringify(records));
-    }
-
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-johor-red', 'text-white', 'shadow-sm');
-        btn.classList.add('text-slate-200');
-      });
-
-      const selectedContent = document.getElementById(`tab-${tabId}-content`);
-      const selectedNav = document.getElementById(`nav-${tabId}`);
-      if (selectedContent) selectedContent.classList.remove('hidden');
-      if (selectedNav) {
-        selectedNav.classList.add('bg-johor-red', 'text-white', 'shadow-sm');
-        selectedNav.classList.remove('text-slate-200');
-      }
-
-      if (tabId === 'dashboard') {
-        updateDashboardStats();
-      } else if (tabId === 'senarai') {
-        renderRecordsTable();
-      } else if (tabId === 'laporan') {
-        renderReportsView();
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function showToast(message, isSuccess = true) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toastMessage');
-      const toastIcon = document.getElementById('toastIcon');
-
-      toastMsg.textContent = message;
-      if (isSuccess) {
-        toastIcon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
-      } else {
-        toastIcon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';
-      }
-
-      toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
-      setTimeout(() => {
-        toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
-      }, 3500);
-    }
-
-    function formatIC(input) {
-      let val = input.value.replace(/\D/g, '');
-      if (val.length > 12) val = val.substring(0, 12);
-      if (val.length > 6) {
-        val = val.substring(0, 6) + '-' + val.substring(6);
-      }
-      if (val.length > 9) {
-        val = val.substring(0, 9) + '-' + val.substring(9);
-      }
-      input.value = val;
-    }
-
-    function formatCurrency(num) {
-      const n = parseFloat(num) || 0;
-      return 'RM ' + n.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    function calculatePovertyStatus(perCapita) {
-      if (perCapita < 330) {
-        return { status: "Miskin Tegar", badge: "bg-red-100 text-red-800 border border-red-300" };
-      } else if (perCapita <= 600) {
-        return { status: "Miskin", badge: "bg-amber-100 text-amber-800 border border-amber-300" };
-      } else {
-        return { status: "Rentan", badge: "bg-emerald-100 text-emerald-800 border border-emerald-300" };
-      }
-    }
-
-    function renderSkillsGrid() {
-      const grid = document.getElementById('skillsGrid');
-      if (!grid) return;
-      grid.innerHTML = SKILLS_LIST.map((skill, index) => `
-        <label class="flex items-center gap-2 text-xs text-slate-700 hover:text-johor-blue cursor-pointer p-1.5 rounded hover:bg-slate-50 transition">
-          <input type="checkbox" id="skill_chk_${index}" value="${skill}" class="rounded text-johor-blue focus:ring-johor-blue border-slate-300">
-          <span>${skill}</span>
+    function initSkillsCheckboxes() {
+      const container = document.getElementById('skillsContainer');
+      container.innerHTML = SKILLS_LIST.map((s, idx) => `
+        <label class="skill-item">
+          <input type="checkbox" name="skillCheck" value="${s}"> ${s}
         </label>
       `).join('');
     }
 
-    function populateDunOptions(district, selectedDun = "") {
-      const dunSelect = document.getElementById('kirDun');
-      dunSelect.innerHTML = '<option value="">-- Pilih DUN --</option>';
-      if (!district || !JOHOR_DUNS[district]) return;
+    function switchTab(id, btn) {
+      document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('aside.sidebar button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (id === 'dash') renderDashboard();
+      if (id === 'records') renderRecordsTable();
+    }
 
-      JOHOR_DUNS[district].forEach(dun => {
-        const opt = document.createElement('option');
-        opt.value = dun;
-        opt.textContent = dun;
-        if (dun === selectedDun) opt.selected = true;
-        dunSelect.appendChild(opt);
+    function checkPGK(strata, perCapita) {
+      if (strata === 'Bandar') {
+        return perCapita <= 830 ? 'Miskin (Bandar)' : 'Lepas PGK';
+      } else {
+        return perCapita <= 677 ? 'Miskin (Luar Bandar)' : 'Lepas PGK';
+      }
+    }
+
+    function recalculateForm() {
+      const strata = document.getElementById('fStrata').value;
+      const kirInc = parseFloat(document.getElementById('fIncome').value) || 0;
+      
+      const airIncRows = document.querySelectorAll('.air-inc');
+      let airTotalInc = 0;
+      airIncRows.forEach(input => {
+        airTotalInc += parseFloat(input.value) || 0;
       });
-    }
 
-    function toggleKirDisease(val) {
-      const input = document.getElementById('kirPenyakit');
-      const wrap = document.getElementById('kirDiseaseWrap');
-      if (val === 'Kronik') {
-        input.disabled = false;
-        wrap.classList.remove('opacity-50');
-      } else {
-        input.disabled = true;
-        input.value = "";
-        wrap.classList.add('opacity-50');
-      }
-    }
+      const totalPax = 1 + airIncRows.length;
+      const totalHouseholdInc = kirInc + airTotalInc;
+      const perCapita = totalHouseholdInc / totalPax;
+      const status = checkPGK(strata, perCapita);
 
-    function toggleHelpSection(val) {
-      const content = document.getElementById('helpSectionContent');
-      if (val === 'Tidak') {
-        content.classList.add('hidden');
-      } else {
-        content.classList.remove('hidden');
-      }
+      document.getElementById('liveTotalInc').innerText = 'RM ' + totalHouseholdInc.toFixed(2);
+      document.getElementById('liveTotalPax').innerText = totalPax + ' Orang';
+      document.getElementById('livePerCapita').innerText = 'RM ' + perCapita.toFixed(2);
+      document.getElementById('liveStatus').innerText = status.toUpperCase();
+      document.getElementById('liveStatus').style.color = status.startsWith('Miskin') ? 'var(--johor-red)' : 'var(--success)';
     }
 
     function addAirRow(data = {}) {
       const tbody = document.getElementById('airTableBody');
-      const rowCount = tbody.querySelectorAll('tr').length + 1;
       const tr = document.createElement('tr');
-      tr.className = "hover:bg-slate-50/80 transition";
       tr.innerHTML = `
-        <td class="p-2 text-center font-bold text-slate-400 row-index">${rowCount}</td>
-        <td class="p-2"><input type="text" class="air-nama w-full px-2 py-1 border border-slate-300 rounded text-xs uppercase" placeholder="Nama Penuh" value="${data.nama || ''}"></td>
-        <td class="p-2"><input type="text" class="air-ic w-full px-2 py-1 border border-slate-300 rounded text-xs" placeholder="No KP" value="${data.ic || ''}" oninput="formatIC(this)"></td>
-        <td class="p-2"><input type="number" class="air-umur w-full px-2 py-1 border border-slate-300 rounded text-xs" placeholder="Umur" value="${data.umur || ''}"></td>
-        <td class="p-2">
-          <select class="air-hubungan w-full px-2 py-1 border border-slate-300 rounded text-xs">
-            <option value="Isteri" ${data.hubungan === 'Isteri' ? 'selected' : ''}>Isteri</option>
-            <option value="Suami" ${data.hubungan === 'Suami' ? 'selected' : ''}>Suami</option>
-            <option value="Anak" ${data.hubungan === 'Anak' || !data.hubungan ? 'selected' : ''}>Anak</option>
-            <option value="Ibu/Bapa" ${data.hubungan === 'Ibu/Bapa' ? 'selected' : ''}>Ibu/Bapa</option>
-            <option value="Cucu" ${data.hubungan === 'Cucu' ? 'selected' : ''}>Cucu</option>
-            <option value="Lain-lain" ${data.hubungan === 'Lain-lain' ? 'selected' : ''}>Lain-lain</option>
-          </select>
-        </td>
-        <td class="p-2">
-          <select class="air-status w-full px-2 py-1 border border-slate-300 rounded text-xs">
-            <option value="Bujang" ${data.status === 'Bujang' || !data.status ? 'selected' : ''}>Bujang</option>
-            <option value="Berkahwin" ${data.status === 'Berkahwin' ? 'selected' : ''}>Berkahwin</option>
-            <option value="Duda" ${data.status === 'Duda' ? 'selected' : ''}>Duda</option>
-            <option value="Janda" ${data.status === 'Janda' ? 'selected' : ''}>Janda</option>
-          </select>
-        </td>
-        <td class="p-2"><input type="text" class="air-kerja w-full px-2 py-1 border border-slate-300 rounded text-xs" placeholder="Pekerjaan" value="${data.kerja || ''}"></td>
-        <td class="p-2"><input type="number" step="0.01" min="0" oninput="recalcIncomeCalculations()" class="air-income w-full px-2 py-1 border border-slate-300 rounded text-xs font-semibold" placeholder="0.00" value="${data.pendapatan !== undefined ? data.pendapatan : 0}"></td>
-        <td class="p-2 text-center">
-          <select class="air-kesihatan w-full px-1 py-1 border border-slate-300 rounded text-xs font-bold">
-            <option value="TK" ${data.kesihatan === 'TK' || !data.kesihatan ? 'selected' : ''}>TK</option>
-            <option value="K" ${data.kesihatan === 'K' ? 'selected' : ''}>K</option>
-          </select>
-        </td>
-        <td class="p-2"><input type="text" class="air-penyakit w-full px-2 py-1 border border-slate-300 rounded text-xs" placeholder="Penyakit kronik" value="${data.penyakit || ''}"></td>
-        <td class="p-2 text-center">
-          <select class="air-produktiviti w-full px-1 py-1 border border-slate-300 rounded text-xs font-bold">
-            <option value="P" ${data.produktiviti === 'P' || !data.produktiviti ? 'selected' : ''}>P</option>
-            <option value="TP" ${data.produktiviti === 'TP' ? 'selected' : ''}>TP</option>
-          </select>
-        </td>
-        <td class="p-2 text-center">
-          <button type="button" onclick="removeAirRow(this)" class="w-6 h-6 rounded bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold transition flex items-center justify-center">
-            &times;
-          </button>
-        </td>
+        <td><input type="text" class="air-name" value="${data.nama || ''}" placeholder="Nama Ahli" style="width:100%;"></td>
+        <td><input type="text" class="air-rel" value="${data.hubungan || ''}" placeholder="Contoh: Isteri/Anak" style="width:100px;"></td>
+        <td><input type="number" class="air-age" value="${data.umur || ''}" style="width:60px;"></td>
+        <td><input type="text" class="air-job" value="${data.kerja || ''}" placeholder="Pekerjaan" style="width:100%;"></td>
+        <td><input type="number" class="air-inc" value="${data.inc || 0}" step="0.01" oninput="recalculateForm()" style="width:90px;"></td>
+        <td><button type="button" class="btn btn-outline" style="padding:2px 6px; color:var(--johor-red);" onclick="this.closest('tr').remove(); recalculateForm();">&times;</button></td>
       `;
       tbody.appendChild(tr);
-      recalcIncomeCalculations();
+      recalculateForm();
     }
 
-    function removeAirRow(btn) {
-      btn.closest('tr').remove();
-      document.querySelectorAll('#airTableBody tr').forEach((row, i) => {
-        row.querySelector('.row-index').textContent = i + 1;
+    function renderDashboard() {
+      document.getElementById('kpiKir').innerText = records.length;
+      const totalAir = records.reduce((acc, r) => acc + (r.air ? r.air.length : 0), 0);
+      document.getElementById('kpiAir').innerText = totalAir;
+
+      const poorUrban = records.filter(r => r.statusPGK === 'Miskin (Bandar)').length;
+      const poorRural = records.filter(r => r.statusPGK === 'Miskin (Luar Bandar)').length;
+      const above = records.filter(r => r.statusPGK === 'Lepas PGK').length;
+
+      document.getElementById('kpiPoorUrban').innerText = poorUrban;
+      document.getElementById('kpiPoorRural').innerText = poorRural;
+      document.getElementById('kpiAbove').innerText = above;
+
+      const tbody = document.getElementById('districtRows');
+      tbody.innerHTML = '';
+      DISTRICTS.forEach(d => {
+        const dRecs = records.filter(r => r.daerah === d);
+        const dAir = dRecs.reduce((acc, r) => acc + (r.air ? r.air.length : 0), 0);
+        const dUrbanPoor = dRecs.filter(r => r.statusPGK === 'Miskin (Bandar)').length;
+        const dRuralPoor = dRecs.filter(r => r.statusPGK === 'Miskin (Luar Bandar)').length;
+        const dAbove = dRecs.filter(r => r.statusPGK === 'Lepas PGK').length;
+        const dHelp = dRecs.filter(r => r.hasHelp === 'Ya').length;
+
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${d}</strong></td>
+            <td>${dRecs.length}</td>
+            <td>${dAir}</td>
+            <td><span class="badge ${dUrbanPoor > 0 ? 'badge-red' : ''}">${dUrbanPoor}</span></td>
+            <td><span class="badge ${dRuralPoor > 0 ? 'badge-red' : ''}">${dRuralPoor}</span></td>
+            <td><span class="badge ${dAbove > 0 ? 'badge-green' : ''}">${dAbove}</span></td>
+            <td>${dHelp}</td>
+          </tr>
+        `;
       });
-      recalcIncomeCalculations();
-    }
-
-    function addHelpRow(data = {}) {
-      const tbody = document.getElementById('helpTableBody');
-      const count = tbody.querySelectorAll('tr').length + 1;
-      const tr = document.createElement('tr');
-      tr.className = "hover:bg-slate-50/80 transition";
-      tr.innerHTML = `
-        <td class="p-2 text-center font-bold text-slate-400 help-index">${count}</td>
-        <td class="p-2"><input type="text" class="help-jenis w-full px-2 py-1 border border-slate-300 rounded text-xs" placeholder="Contoh: Bantuan Kasih Johor" value="${data.jenis || ''}"></td>
-        <td class="p-2"><input type="text" class="help-agensi w-full px-2 py-1 border border-slate-300 rounded text-xs" placeholder="Contoh: MAIJ / JKM" value="${data.agensi || ''}"></td>
-        <td class="p-2"><input type="text" class="help-penerima w-full px-2 py-1 border border-slate-300 rounded text-xs" placeholder="Nama Penerima" value="${data.penerima || ''}"></td>
-        <td class="p-2">
-          <select onchange="recalcHelpTotals()" class="help-freq w-full px-2 py-1 border border-slate-300 rounded text-xs font-semibold">
-            <option value="Bulanan" ${data.kekerapan === 'Bulanan' || !data.kekerapan ? 'selected' : ''}>Bulanan</option>
-            <option value="Tahunan" ${data.kekerapan === 'Tahunan' ? 'selected' : ''}>Tahunan</option>
-            <option value="One-off" ${data.kekerapan === 'One-off' ? 'selected' : ''}>One-off</option>
-          </select>
-        </td>
-        <td class="p-2"><input type="number" step="0.01" min="0" oninput="recalcHelpTotals()" class="help-nilai w-full px-2 py-1 border border-slate-300 rounded text-xs font-semibold text-right" placeholder="0.00" value="${data.nilai !== undefined ? data.nilai : 0}"></td>
-        <td class="p-2 text-center">
-          <button type="button" onclick="removeHelpRow(this)" class="w-6 h-6 rounded bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold transition flex items-center justify-center">
-            &times;
-          </button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-      recalcHelpTotals();
-    }
-
-    function removeHelpRow(btn) {
-      btn.closest('tr').remove();
-      document.querySelectorAll('#helpTableBody tr').forEach((row, i) => {
-        row.querySelector('.help-index').textContent = i + 1;
-      });
-      recalcHelpTotals();
-    }
-
-    function recalcHelpTotals() {
-      let monthly = 0;
-      let yearly = 0;
-      let oneOff = 0;
-
-      document.querySelectorAll('#helpTableBody tr').forEach(row => {
-        const freq = row.querySelector('.help-freq').value;
-        const val = parseFloat(row.querySelector('.help-nilai').value) || 0;
-        if (freq === 'Bulanan') monthly += val;
-        else if (freq === 'Tahunan') yearly += val;
-        else if (freq === 'One-off') oneOff += val;
-      });
-
-      document.getElementById('totalHelpMonthly').textContent = formatCurrency(monthly);
-      document.getElementById('totalHelpYearly').textContent = formatCurrency(yearly);
-      document.getElementById('totalHelpOneOff').textContent = formatCurrency(oneOff);
-    }
-
-    function recalcIncomeCalculations() {
-      const kirIncome = parseFloat(document.getElementById('kirIncome').value) || 0;
-      const airRows = document.querySelectorAll('#airTableBody tr');
-      const airCount = airRows.length;
-      let airTotalIncome = 0;
-
-      airRows.forEach(row => {
-        const val = parseFloat(row.querySelector('.air-income').value) || 0;
-        airTotalIncome += val;
-      });
-
-      const totalHouseholdIncome = kirIncome + airTotalIncome;
-      const totalMembers = airCount + 1; // KIR + AIR
-      const perCapita = totalHouseholdIncome / totalMembers;
-
-      document.getElementById('calc-bil-air').textContent = `${totalMembers} Orang (${airCount} AIR + 1 KIR)`;
-      document.getElementById('calc-pendapatan-ir').textContent = formatCurrency(totalHouseholdIncome);
-      document.getElementById('calc-per-kapita').textContent = formatCurrency(perCapita);
-
-      const pgk = calculatePovertyStatus(perCapita);
-      const badgeEl = document.getElementById('calc-badge-pgk');
-      badgeEl.className = `inline-block px-3 py-1 text-xs font-black rounded-full ${pgk.badge}`;
-      badgeEl.textContent = pgk.status;
-    }
-
-    function handlePhotoUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        currentPhotoBase64 = evt.target.result;
-        const preview = document.getElementById('photoPreview');
-        preview.src = currentPhotoBase64;
-        document.getElementById('photoPreviewContainer').classList.remove('hidden');
-        document.getElementById('removePhotoBtn').classList.remove('hidden');
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function removeFieldPhoto() {
-      currentPhotoBase64 = "";
-      document.getElementById('evidencePhotoInput').value = "";
-      document.getElementById('photoPreview').src = "";
-      document.getElementById('photoPreviewContainer').classList.add('hidden');
-      document.getElementById('removePhotoBtn').classList.add('hidden');
-    }
-
-    function resetForm() {
-      document.getElementById('bancianForm').reset();
-      document.getElementById('recordId').value = "";
-      document.getElementById('form-mode-title').textContent = "Daftar Bancian KIR Baharu";
-      document.getElementById('airTableBody').innerHTML = "";
-      document.getElementById('helpTableBody').innerHTML = "";
-      removeFieldPhoto();
-      toggleKirDisease("Tidak Kronik");
-      toggleHelpSection("Ya");
-      recalcIncomeCalculations();
-      recalcHelpTotals();
-    }
-
-    function openNewForm() {
-      resetForm();
-      switchTab('daftar');
-    }
-
-    function handleFormSubmit(e) {
-      e.preventDefault();
-
-      // Collect AIR data
-      const airData = [];
-      document.querySelectorAll('#airTableBody tr').forEach(row => {
-        const nama = row.querySelector('.air-nama').value.trim();
-        if (nama) {
-          airData.push({
-            nama: nama,
-            ic: row.querySelector('.air-ic').value.trim(),
-            umur: parseInt(row.querySelector('.air-umur').value) || 0,
-            hubungan: row.querySelector('.air-hubungan').value,
-            status: row.querySelector('.air-status').value,
-            kerja: row.querySelector('.air-kerja').value.trim(),
-            pendapatan: parseFloat(row.querySelector('.air-income').value) || 0,
-            kesihatan: row.querySelector('.air-kesihatan').value,
-            penyakit: row.querySelector('.air-penyakit').value.trim(),
-            produktiviti: row.querySelector('.air-produktiviti').value
-          });
-        }
-      });
-
-      // Collect Help data
-      const helpData = [];
-      const hasHelp = document.getElementById('hasHelpSelect').value;
-      if (hasHelp === 'Ya') {
-        document.querySelectorAll('#helpTableBody tr').forEach(row => {
-          const jenis = row.querySelector('.help-jenis').value.trim();
-          if (jenis) {
-            helpData.push({
-              jenis: jenis,
-              agensi: row.querySelector('.help-agensi').value.trim(),
-              penerima: row.querySelector('.help-penerima').value.trim(),
-              kekerapan: row.querySelector('.help-freq').value,
-              nilai: parseFloat(row.querySelector('.help-nilai').value) || 0
-            });
-          }
-        });
-      }
-
-      // Collect Selected Skills
-      const selectedSkills = [];
-      SKILLS_LIST.forEach((s, idx) => {
-        const chk = document.getElementById(`skill_chk_${idx}`);
-        if (chk && chk.checked) selectedSkills.push(s);
-      });
-
-      const recordId = document.getElementById('recordId').value || `JHR-${new Date().getFullYear()}-${String(records.length + 1).padStart(3, '0')}`;
-      const kirIncome = parseFloat(document.getElementById('kirIncome').value) || 0;
-
-      const recordObj = {
-        id: recordId,
-        nama: document.getElementById('kirNama').value.trim().toUpperCase(),
-        ic: document.getElementById('kirIc').value.trim(),
-        umur: parseInt(document.getElementById('kirUmur').value) || 0,
-        jantina: document.getElementById('kirJantina').value,
-        kahwin: document.getElementById('kirKahwin').value,
-        phone: document.getElementById('kirPhone').value.trim(),
-        alamat: document.getElementById('kirAlamat').value.trim(),
-        daerah: document.getElementById('kirDaerah').value,
-        mukim: document.getElementById('kirMukim').value.trim(),
-        dun: document.getElementById('kirDun').value,
-        strata: document.getElementById('kirStrata').value,
-        edu: document.getElementById('kirEdu').value,
-        kerjaStatus: document.getElementById('kirKerjaStatus').value,
-        pekerjaan: document.getElementById('kirPekerjaan').value.trim(),
-        income: kirIncome,
-        kesihatan: document.getElementById('kirKesihatan').value,
-        penyakit: document.getElementById('kirPenyakit').value.trim(),
-        produktiviti: document.getElementById('kirProduktiviti').value,
-        air: airData,
-        hasHelp: hasHelp,
-        help: helpData,
-        hasSkill: document.getElementById('hasSkillSelect').value,
-        skillIncome: document.getElementById('skillIncomeGenerated').value,
-        skillAmount: parseFloat(document.getElementById('skillMonthlyEst').value) || 0,
-        skills: selectedSkills,
-        skillOthers: document.getElementById('skillOthers').value.trim(),
-        kkNama: document.getElementById('kkNama').value.trim().toUpperCase(),
-        kkPhone: document.getElementById('kkPhone').value.trim(),
-        kkDate: document.getElementById('kkTarikh').value || new Date().toISOString().split('T')[0],
-        photo: currentPhotoBase64
-      };
-
-      const existingIndex = records.findIndex(r => r.id === recordId);
-      if (existingIndex >= 0) {
-        records[existingIndex] = recordObj;
-        showToast(`Profil KIR ${recordObj.nama} berjaya dikemas kini!`);
-      } else {
-        records.unshift(recordObj);
-        showToast(`Bancian KIR ${recordObj.nama} berjaya didaftarkan!`);
-      }
-
-      saveState();
-      switchTab('senarai');
-    }
-
-    function editRecord(id) {
-      const r = records.find(item => item.id === id);
-      if (!r) return;
-
-      resetForm();
-      document.getElementById('recordId').value = r.id;
-      document.getElementById('form-mode-title').textContent = `Kemaskini Rekod: ${r.nama} (${r.id})`;
-
-      document.getElementById('kirNama').value = r.nama || "";
-      document.getElementById('kirIc').value = r.ic || "";
-      document.getElementById('kirUmur').value = r.umur || "";
-      document.getElementById('kirJantina').value = r.jantina || "";
-      document.getElementById('kirKahwin').value = r.kahwin || "";
-      document.getElementById('kirPhone').value = r.phone || "";
-      document.getElementById('kirAlamat').value = r.alamat || "";
-      document.getElementById('kirDaerah').value = r.daerah || "";
-      populateDunOptions(r.daerah, r.dun);
-      document.getElementById('kirMukim').value = r.mukim || "";
-      document.getElementById('kirStrata').value = r.strata || "";
-      document.getElementById('kirEdu').value = r.edu || "";
-      document.getElementById('kirKerjaStatus').value = r.kerjaStatus || "";
-      document.getElementById('kirPekerjaan').value = r.pekerjaan || "";
-      document.getElementById('kirIncome').value = r.income || 0;
-      document.getElementById('kirKesihatan').value = r.kesihatan || "Tidak Kronik";
-      toggleKirDisease(r.kesihatan || "Tidak Kronik");
-      document.getElementById('kirPenyakit').value = r.penyakit || "";
-      document.getElementById('kirProduktiviti').value = r.produktiviti || "Produktif";
-
-      // Populate AIR
-      if (r.air && r.air.length > 0) {
-        r.air.forEach(a => addAirRow(a));
-      }
-
-      // Populate Help
-      document.getElementById('hasHelpSelect').value = r.hasHelp || "Tidak";
-      toggleHelpSection(r.hasHelp || "Tidak");
-      if (r.help && r.help.length > 0) {
-        r.help.forEach(h => addHelpRow(h));
-      }
-
-      // Skills
-      document.getElementById('hasSkillSelect').value = r.hasSkill || "Tidak";
-      document.getElementById('skillIncomeGenerated').value = r.skillIncome || "Tidak";
-      document.getElementById('skillMonthlyEst').value = r.skillAmount || 0;
-      document.getElementById('skillOthers').value = r.skillOthers || "";
-      if (r.skills && r.skills.length > 0) {
-        SKILLS_LIST.forEach((s, idx) => {
-          const chk = document.getElementById(`skill_chk_${idx}`);
-          if (chk) chk.checked = r.skills.includes(s);
-        });
-      }
-
-      // Pengesahan
-      document.getElementById('kkNama').value = r.kkNama || "";
-      document.getElementById('kkPhone').value = r.kkPhone || "";
-      document.getElementById('kkTarikh').value = r.kkDate || "";
-
-      if (r.photo) {
-        currentPhotoBase64 = r.photo;
-        document.getElementById('photoPreview').src = r.photo;
-        document.getElementById('photoPreviewContainer').classList.remove('hidden');
-        document.getElementById('removePhotoBtn').classList.remove('hidden');
-      }
-
-      recalcIncomeCalculations();
-      switchTab('daftar');
-    }
-
-    function deleteRecord(id) {
-      const r = records.find(item => item.id === id);
-      if (!r) return;
-      
-      const modalConfirm = document.createElement('div');
-      modalConfirm.className = 'fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4';
-      modalConfirm.innerHTML = `
-        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-slate-200">
-          <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xl mx-auto mb-3">
-            <i class="fa-solid fa-trash-can"></i>
-          </div>
-          <h4 class="text-base font-bold text-center text-slate-800">Padam Rekod Ini?</h4>
-          <p class="text-xs text-center text-slate-500 mt-1">Anda pasti ingin memadam rekod KIR <strong>${r.nama}</strong>? Tindakan ini tidak boleh dibatalkan.</p>
-          <div class="flex items-center justify-center gap-3 mt-5">
-            <button id="cancelDelBtn" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg">Batal</button>
-            <button id="confirmDelBtn" class="px-4 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-lg">Ya, Padam</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modalConfirm);
-
-      modalConfirm.querySelector('#cancelDelBtn').onclick = () => modalConfirm.remove();
-      modalConfirm.querySelector('#confirmDelBtn').onclick = () => {
-        records = records.filter(item => item.id !== id);
-        saveState();
-        modalConfirm.remove();
-        renderRecordsTable();
-        updateDashboardStats();
-        showToast("Rekod berjaya dipadam dari pangkalan data.", false);
-      };
     }
 
     function renderRecordsTable() {
-      const tbody = document.getElementById('fullRecordsTableBody');
-      const search = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
-      const filterDist = document.getElementById('filterDistrict')?.value || '';
-      const filterPov = document.getElementById('filterPoverty')?.value || '';
+      const q = (document.getElementById('searchBox')?.value || '').toLowerCase();
+      const strata = document.getElementById('selStrata')?.value || '';
+      const pgk = document.getElementById('selPgk')?.value || '';
 
       const filtered = records.filter(r => {
-        const airIncome = (r.air || []).reduce((acc, a) => acc + (parseFloat(a.pendapatan) || 0), 0);
-        const tot = (parseFloat(r.income) || 0) + airIncome;
-        const cap = tot / ((r.air ? r.air.length : 0) + 1);
-        const pov = calculatePovertyStatus(cap).status;
-
-        const matchQuery = !search || [r.nama, r.ic, r.phone, r.daerah, r.dun, r.mukim].some(val => (val || '').toLowerCase().includes(search));
-        const matchDist = !filterDist || r.daerah === filterDist;
-        const matchPov = !filterPov || pov === filterPov;
-
-        return matchQuery && matchDist && matchPov;
+        const textMatch = [r.nama, r.ic, r.daerah, r.dun].join(' ').toLowerCase().includes(q);
+        const strataMatch = strata ? r.strata === strata : true;
+        const pgkMatch = pgk ? r.statusPGK === pgk : true;
+        return textMatch && strataMatch && pgkMatch;
       });
 
-      if (filtered.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="9" class="p-8 text-center text-slate-400">
-              <i class="fa-solid fa-box-open text-3xl mb-2 block"></i>
-              Tiada rekod bancian ditemui mengikut padanan kriteria tapisan anda.
-            </td>
-          </tr>
-        `;
+      const tbody = document.getElementById('recordsBody');
+      tbody.innerHTML = '';
+
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:30px; color:var(--text-muted);">Tiada rekod bancian ditemui.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = filtered.map(r => {
-        const airIncome = (r.air || []).reduce((acc, a) => acc + (parseFloat(a.pendapatan) || 0), 0);
-        const totInc = (parseFloat(r.income) || 0) + airIncome;
-        const totalPeople = (r.air ? r.air.length : 0) + 1;
-        const perCapita = totInc / totalPeople;
-        const pgk = calculatePovertyStatus(perCapita);
-
-        return `
-          <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-            <td class="p-3">
-              <div class="font-bold text-johor-navy">${r.nama}</div>
-              <div class="text-[10px] text-slate-500">${r.strata || 'Luar Bandar'} &bull; ${r.kerjaStatus || 'Bekerja'}</div>
-            </td>
-            <td class="p-3 font-mono text-slate-700">${r.ic}</td>
-            <td class="p-3">
-              <span class="font-semibold text-slate-800">${r.daerah}</span>
-              <span class="block text-[10px] text-slate-500">${r.dun || '-'}</span>
-            </td>
-            <td class="p-3 text-center">
-              <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-800">
-                ${totalPeople}
-              </span>
-            </td>
-            <td class="p-3 text-right font-semibold text-slate-700">${formatCurrency(totInc)}</td>
-            <td class="p-3 text-right font-bold text-johor-red">${formatCurrency(perCapita)}</td>
-            <td class="p-3 text-center">
-              <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black ${pgk.badge}">
-                ${pgk.status}
-              </span>
-            </td>
-            <td class="p-3 text-center">
-              <span class="text-xs font-bold ${r.hasHelp === 'Ya' ? 'text-emerald-700' : 'text-slate-400'}">
-                ${r.hasHelp === 'Ya' ? `<i class="fa-solid fa-circle-check"></i> Ya (${r.help ? r.help.length : 0})` : 'Tidak'}
-              </span>
-            </td>
-            <td class="p-3 text-center">
-              <div class="flex items-center justify-center gap-1.5">
-                <button onclick="viewIndividualRecord('${r.id}')" title="Papar Kad Profil" class="w-7 h-7 rounded-lg bg-blue-50 hover:bg-blue-100 text-johor-blue transition flex items-center justify-center">
-                  <i class="fa-solid fa-id-card"></i>
-                </button>
-                <button onclick="editRecord('${r.id}')" title="Kemaskini Rekod" class="w-7 h-7 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 transition flex items-center justify-center">
-                  <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-                <button onclick="deleteRecord('${r.id}')" title="Padam Rekod" class="w-7 h-7 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition flex items-center justify-center">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </div>
+      filtered.forEach(r => {
+        const badgeColor = r.statusPGK.startsWith('Miskin') ? 'badge-red' : 'badge-green';
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${r.nama}</strong><br><small style="color:var(--text-muted);">${r.kerja || '-'}</small></td>
+            <td>${r.ic}</td>
+            <td>${r.daerah}<br><small style="color:var(--text-muted);">${r.dun || '-'}</small></td>
+            <td>${r.strata}</td>
+            <td>${r.air ? r.air.length : 0} orang</td>
+            <td>RM ${r.totalInc.toFixed(2)}</td>
+            <td><strong>RM ${r.perCapita.toFixed(2)}</strong></td>
+            <td><span class="badge ${badgeColor}">${r.statusPGK}</span></td>
+            <td>
+              <button class="btn btn-outline" style="padding:4px 8px; font-size:0.75rem;" onclick="editRecord('${r.id}')">Edit</button>
+              <button class="btn btn-outline" style="padding:4px 8px; font-size:0.75rem; color:var(--johor-red);" onclick="deleteRecord('${r.id}')">Padam</button>
             </td>
           </tr>
         `;
-      }).join('');
-    }
-
-    function updateDashboardStats() {
-      let totalKir = records.length;
-      let totalAir = 0;
-      let miskinTegar = 0;
-      let produktif = 0;
-      let terimaBantuan = 0;
-
-      const districtStats = {
-        "Johor Bahru": { kir: 0, air: 0, tegar: 0, prod: 0, incTotal: 0 },
-        "Kulai": { kir: 0, air: 0, tegar: 0, prod: 0, incTotal: 0 },
-        "Pontian": { kir: 0, air: 0, tegar: 0, prod: 0, incTotal: 0 },
-        "Kota Tinggi": { kir: 0, air: 0, tegar: 0, prod: 0, incTotal: 0 },
-        "Kluang": { kir: 0, air: 0, tegar: 0, prod: 0, incTotal: 0 },
-        "Batu Pahat": { kir: 0, air: 0, tegar: 0, prod: 0, incTotal: 0 },
-        "Muar": { kir: 0, air: 0, tegar: 0, prod: 0, incTotal: 0 },
-        "Tangkak": { kir: 0, air: 0, tegar: 0, prod: 0, incTotal: 0 },
-        "Segamat": { kir: 0, air: 0, tegar: 0, prod: 0, incTotal: 0 },
-        "Mersing": { kir: 0, air: 0, tegar: 0, prod: 0, incTotal: 0 }
-      };
-
-      records.forEach(r => {
-        const airLen = (r.air || []).length;
-        totalAir += airLen;
-
-        const airIncome = (r.air || []).reduce((acc, a) => acc + (parseFloat(a.pendapatan) || 0), 0);
-        const householdIncome = (parseFloat(r.income) || 0) + airIncome;
-        const perCapita = householdIncome / (airLen + 1);
-
-        const isTegar = perCapita < 330;
-        if (isTegar) miskinTegar++;
-        if (r.produktiviti === 'Produktif' || (r.skills && r.skills.length > 0)) produktif++;
-        if (r.hasHelp === 'Ya') terimaBantuan++;
-
-        if (r.daerah && districtStats[r.daerah]) {
-          districtStats[r.daerah].kir++;
-          districtStats[r.daerah].air += airLen;
-          if (isTegar) districtStats[r.daerah].tegar++;
-          if (r.produktiviti === 'Produktif') districtStats[r.daerah].prod++;
-          districtStats[r.daerah].incTotal += householdIncome;
-        }
       });
-
-      // Update KPI counters
-      document.getElementById('kpi-kir-count').textContent = totalKir;
-      document.getElementById('kpi-air-count').textContent = totalAir;
-      document.getElementById('kpi-tegar-count').textContent = miskinTegar;
-      document.getElementById('kpi-produktif-count').textContent = produktif;
-      document.getElementById('kpi-bantuan-count').textContent = terimaBantuan;
-
-      // Populate 10 Districts Breakdown Table
-      const distTbody = document.getElementById('district-breakdown-tbody');
-      distTbody.innerHTML = Object.keys(districtStats).map(daerah => {
-        const d = districtStats[daerah];
-        const avg = d.kir > 0 ? (d.incTotal / d.kir) : 0;
-        return `
-          <tr class="hover:bg-slate-50 transition">
-            <td class="px-3 py-2 font-bold text-slate-800">${daerah}</td>
-            <td class="px-3 py-2 text-center font-bold text-johor-navy">${d.kir}</td>
-            <td class="px-3 py-2 text-center text-slate-600">${d.air}</td>
-            <td class="px-3 py-2 text-center font-bold text-rose-600">${d.tegar}</td>
-            <td class="px-3 py-2 text-center text-emerald-700 font-semibold">${d.prod}</td>
-            <td class="px-3 py-2 text-right font-medium text-slate-700">${formatCurrency(avg)}</td>
-          </tr>
-        `;
-      }).join('');
-
-      // Populate Recent 5 Records on Dashboard
-      const recentTbody = document.getElementById('dash-recent-tbody');
-      const latest = records.slice(0, 5);
-      if (latest.length === 0) {
-        recentTbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Belum ada rekod pendaftaran.</td></tr>`;
-      } else {
-        recentTbody.innerHTML = latest.map(r => {
-          const airIncome = (r.air || []).reduce((acc, a) => acc + (parseFloat(a.pendapatan) || 0), 0);
-          const tot = (parseFloat(r.income) || 0) + airIncome;
-          const cap = tot / ((r.air ? r.air.length : 0) + 1);
-          const pgk = calculatePovertyStatus(cap);
-
-          return `
-            <tr class="hover:bg-slate-50 transition">
-              <td class="px-3 py-2.5 font-bold text-johor-navy">${r.nama}</td>
-              <td class="px-3 py-2.5 font-mono text-slate-600">${r.ic}</td>
-              <td class="px-3 py-2.5 text-slate-700">${r.daerah} <span class="text-[10px] text-slate-400">(${r.dun || '-'})</span></td>
-              <td class="px-3 py-2.5 text-center font-semibold">${(r.air ? r.air.length : 0) + 1}</td>
-              <td class="px-3 py-2.5 text-right font-semibold text-slate-800">${formatCurrency(tot)}</td>
-              <td class="px-3 py-2.5 text-center">
-                <span class="inline-block px-2 py-0.5 rounded text-[10px] font-black ${pgk.badge}">${pgk.status}</span>
-              </td>
-              <td class="px-3 py-2.5 text-center">
-                <button onclick="viewIndividualRecord('${r.id}')" class="px-2 py-1 text-[11px] font-bold text-johor-blue hover:text-johor-navy transition">
-                  Papar Kad &rarr;
-                </button>
-              </td>
-            </tr>
-          `;
-        }).join('');
-      }
     }
 
-    function renderReportsView() {
-      document.getElementById('rep-total-kir').textContent = records.length;
-      document.getElementById('rep-total-air').textContent = records.reduce((acc, r) => acc + (r.air ? r.air.length : 0), 0);
-      document.getElementById('rep-prod-kir').textContent = records.filter(r => r.produktiviti === 'Produktif').length;
-      document.getElementById('rep-nonprod-kir').textContent = records.filter(r => r.produktiviti === 'Tidak Produktif').length;
+    function openModal() {
+      document.getElementById('frmBanci').reset();
+      document.getElementById('editId').value = '';
+      document.getElementById('airTableBody').innerHTML = '';
+      document.getElementById('modalTitle').innerText = 'Daftar Profil KIR Baharu';
+      initSkillsCheckboxes();
+      recalculateForm();
+      document.getElementById('modalForm').classList.add('show');
     }
 
-    function viewIndividualRecord(id) {
-      const r = records.find(item => item.id === id);
+    function closeModal() {
+      document.getElementById('modalForm').classList.remove('show');
+    }
+
+    function editRecord(id) {
+      const r = records.find(x => x.id === id);
       if (!r) return;
 
-      const airIncome = (r.air || []).reduce((acc, a) => acc + (parseFloat(a.pendapatan) || 0), 0);
-      const totalHouseholdIncome = (parseFloat(r.income) || 0) + airIncome;
-      const totalMembers = (r.air ? r.air.length : 0) + 1;
-      const perCapita = totalHouseholdIncome / totalMembers;
-      const pgk = calculatePovertyStatus(perCapita);
+      openModal();
+      document.getElementById('modalTitle').innerText = 'Kemaskini Profil KIR: ' + r.nama;
+      document.getElementById('editId').value = r.id;
+      document.getElementById('fNama').value = r.nama;
+      document.getElementById('fIc').value = r.ic;
+      document.getElementById('fUmur').value = r.umur || '';
+      document.getElementById('fJantina').value = r.jantina || 'Lelaki';
+      document.getElementById('fKahwin').value = r.kahwin || 'Berkahwin';
+      document.getElementById('fDaerah').value = r.daerah;
+      document.getElementById('fDun').value = r.dun || '';
+      document.getElementById('fStrata').value = r.strata;
+      document.getElementById('fEdu').value = r.edu || 'SPM';
+      document.getElementById('fKerja').value = r.kerja || '';
+      document.getElementById('fIncome').value = r.incomeKir;
+      document.getElementById('fProductivity').value = r.productivity || 'Produktif';
+      document.getElementById('fPhone').value = r.phone || '';
+      document.getElementById('fHasHelp').value = r.hasHelp || 'Tidak';
+      document.getElementById('fHelpAgency').value = r.helpAgency || '';
+      document.getElementById('fHelpVal').value = r.helpVal || 0;
+      document.getElementById('fKkName').value = r.kkName || '';
+      document.getElementById('fKkPhone').value = r.kkPhone || '';
+      document.getElementById('fKkDate').value = r.kkDate || '';
 
-      document.getElementById('modal-doc-id').textContent = `NO. DAFTAR: ${r.id}`;
-      const badge = document.getElementById('modal-pgk-badge');
-      badge.textContent = `STATUS: ${pgk.status}`;
-      badge.className = `inline-block px-3 py-1 text-xs font-black uppercase rounded ${pgk.badge}`;
+      document.getElementById('airTableBody').innerHTML = '';
+      if (r.air && r.air.length) {
+        r.air.forEach(a => addAirRow(a));
+      }
 
-      document.getElementById('modal-sign-kk').textContent = r.kkNama || "Ketua Kampung";
+      if (r.skills) {
+        document.querySelectorAll('input[name="skillCheck"]').forEach(cb => {
+          if (r.skills.includes(cb.value)) cb.checked = true;
+        });
+      }
 
-      const container = document.getElementById('profileBodyDynamic');
-      container.innerHTML = `
-        <!-- Section A Card -->
-        <div class="border border-slate-300 rounded-xl p-4 bg-slate-50/50">
-          <h4 class="font-black text-johor-navy uppercase text-xs pb-2 border-b border-slate-200 mb-3 flex items-center justify-between">
-            <span>A. MAKLUMAT KETUA ISI RUMAH (KIR)</span>
-            <span class="text-slate-500 font-semibold">${r.daerah} &bull; ${r.dun || '-'} &bull; Mukim: ${r.mukim || '-'}</span>
-          </h4>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-slate-700">
-            <div>
-              <span class="block text-slate-400 font-bold text-[10px] uppercase">Nama Penuh</span>
-              <span class="font-bold text-slate-900">${r.nama}</span>
-            </div>
-            <div>
-              <span class="block text-slate-400 font-bold text-[10px] uppercase">No. Kad Pengenalan</span>
-              <span class="font-mono font-bold">${r.ic}</span>
-            </div>
-            <div>
-              <span class="block text-slate-400 font-bold text-[10px] uppercase">Umur / Jantina</span>
-              <span>${r.umur} Tahun / ${r.jantina}</span>
-            </div>
-            <div>
-              <span class="block text-slate-400 font-bold text-[10px] uppercase">Status Kahwin</span>
-              <span>${r.kahwin}</span>
-            </div>
-            <div>
-              <span class="block text-slate-400 font-bold text-[10px] uppercase">Pekerjaan</span>
-              <span>${r.pekerjaan || '-'} (${r.kerjaStatus})</span>
-            </div>
-            <div>
-              <span class="block text-slate-400 font-bold text-[10px] uppercase">Pendapatan KIR</span>
-              <span class="font-bold text-johor-blue">${formatCurrency(r.income)}</span>
-            </div>
-            <div>
-              <span class="block text-slate-400 font-bold text-[10px] uppercase">Kesihatan / Produktiviti</span>
-              <span>${r.kesihatan} (${r.produktiviti})</span>
-            </div>
-            <div>
-              <span class="block text-slate-400 font-bold text-[10px] uppercase">No. Telefon</span>
-              <span>${r.phone || '-'}</span>
-            </div>
-            <div class="col-span-2 sm:col-span-4">
-              <span class="block text-slate-400 font-bold text-[10px] uppercase">Alamat Kediaman</span>
-              <span class="font-semibold">${r.alamat || '-'}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section Financial Summary Indicator -->
-        <div class="grid grid-cols-3 gap-3 text-center">
-          <div class="p-3 rounded-xl border border-slate-200 bg-white">
-            <span class="text-[10px] font-bold text-slate-500 uppercase block">Jumlah Ahli Isi Rumah</span>
-            <span class="text-base font-black text-johor-navy">${totalMembers} Orang</span>
-          </div>
-          <div class="p-3 rounded-xl border border-blue-200 bg-blue-50">
-            <span class="text-[10px] font-bold text-blue-700 uppercase block">Pendapatan Keseluruhan IR</span>
-            <span class="text-base font-black text-blue-900">${formatCurrency(totalHouseholdIncome)}</span>
-          </div>
-          <div class="p-3 rounded-xl border border-red-200 bg-red-50">
-            <span class="text-[10px] font-bold text-red-700 uppercase block">Pendapatan Per Kapita</span>
-            <span class="text-base font-black text-red-900">${formatCurrency(perCapita)}</span>
-          </div>
-        </div>
-
-        <!-- Section B Table -->
-        <div class="border border-slate-300 rounded-xl p-4 bg-slate-50/50">
-          <h4 class="font-black text-johor-navy uppercase text-xs pb-2 border-b border-slate-200 mb-2">B. MAKLUMAT AHLI ISI RUMAH (AIR)</h4>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-[11px]">
-              <thead class="text-slate-500 font-bold border-b border-slate-200">
-                <tr>
-                  <th class="py-1">Nama Ahli</th>
-                  <th class="py-1">No. KP</th>
-                  <th class="py-1">Umur</th>
-                  <th class="py-1">Hubungan</th>
-                  <th class="py-1">Pekerjaan</th>
-                  <th class="py-1 text-right">Pendapatan</th>
-                  <th class="py-1 text-center">Kesihatan</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-200">
-                ${(r.air && r.air.length > 0) ? r.air.map(a => `
-                  <tr>
-                    <td class="py-1.5 font-bold">${a.nama}</td>
-                    <td class="py-1.5 font-mono">${a.ic || '-'}</td>
-                    <td class="py-1.5">${a.umur || '-'} Thn</td>
-                    <td class="py-1.5">${a.hubungan}</td>
-                    <td class="py-1.5">${a.kerja || '-'}</td>
-                    <td class="py-1.5 text-right font-semibold">${formatCurrency(a.pendapatan)}</td>
-                    <td class="py-1.5 text-center">${a.kesihatan} ${a.penyakit ? '('+a.penyakit+')' : ''}</td>
-                  </tr>
-                `).join('') : '<tr><td colspan="7" class="py-2 text-center text-slate-400">Tiada ahli tanggungan lain (KIR Tunggal)</td></tr>'}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Section C Assistance & Section D Skills -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Bantuan -->
-          <div class="border border-slate-300 rounded-xl p-4 bg-slate-50/50">
-            <h4 class="font-black text-johor-navy uppercase text-xs pb-2 border-b border-slate-200 mb-2">C. BANTUAN YANG DITERIMA</h4>
-            ${(r.help && r.help.length > 0) ? `
-              <ul class="space-y-2 mt-1">
-                ${r.help.map(h => `
-                  <li class="flex items-center justify-between text-[11px] p-2 bg-white rounded border border-slate-200">
-                    <div>
-                      <span class="font-bold text-slate-800">${h.jenis}</span>
-                      <span class="block text-[10px] text-slate-500">${h.agensi} (${h.kekerapan})</span>
-                    </div>
-                    <span class="font-bold text-emerald-700">${formatCurrency(h.nilai)}</span>
-                  </li>
-                `).join('')}
-              </ul>
-            ` : '<p class="text-slate-400 py-2">Tiada rekod bantuan semasa.</p>'}
-          </div>
-
-          <!-- Kemahiran -->
-          <div class="border border-slate-300 rounded-xl p-4 bg-slate-50/50">
-            <h4 class="font-black text-johor-navy uppercase text-xs pb-2 border-b border-slate-200 mb-2">D. KEMAHIRAN & POTENSI</h4>
-            <div class="space-y-2">
-              <div>
-                <span class="text-[10px] font-bold text-slate-400 uppercase block">Kemahiran Tersedia:</span>
-                <div class="flex flex-wrap gap-1 mt-1">
-                  ${(r.skills && r.skills.length > 0) ? r.skills.map(s => `
-                    <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">${s}</span>
-                  `).join('') : '<span class="text-slate-400 text-[11px]">Tiada kemahiran khusus dinyatakan.</span>'}
-                </div>
-              </div>
-              ${r.skillOthers ? `<p class="text-[10px] text-slate-600 mt-1"><strong>Lain-lain:</strong> ${r.skillOthers}</p>` : ''}
-              <div class="pt-2 border-t border-slate-200 flex justify-between items-center text-[11px]">
-                <span class="text-slate-600">Anggaran Pendapatan Kemahiran:</span>
-                <span class="font-bold text-johor-blue">${formatCurrency(r.skillAmount)} / bulan</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Field Photo if exists -->
-        ${r.photo ? `
-          <div class="border border-slate-300 rounded-xl p-4 bg-slate-50/50">
-            <h4 class="font-black text-johor-navy uppercase text-xs pb-2 border-b border-slate-200 mb-2">BUKTI BERGAMBAR LAWATAN TAPAK</h4>
-            <div class="flex items-center gap-4">
-              <img src="${r.photo}" alt="Foto Bukti" class="w-44 h-28 object-cover rounded-lg border border-slate-300 shadow-sm">
-              <p class="text-slate-500 text-[11px]">Foto pengesahan fizikal keadaan kediaman / profil isi rumah yang dirakam semasa bancian lapangan.</p>
-            </div>
-          </div>
-        ` : ''}
-      `;
-
-      const modal = document.getElementById('profileModal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      recalculateForm();
     }
 
-    function closeProfileModal() {
-      const modal = document.getElementById('profileModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
+    function saveBanci(e) {
+      e.preventDefault();
+      const editId = document.getElementById('editId').value;
+      const nama = document.getElementById('fNama').value;
+      const ic = document.getElementById('fIc').value;
+      const umur = parseInt(document.getElementById('fUmur').value) || 0;
+      const jantina = document.getElementById('fJantina').value;
+      const kahwin = document.getElementById('fKahwin').value;
+      const daerah = document.getElementById('fDaerah').value;
+      const dun = document.getElementById('fDun').value;
+      const strata = document.getElementById('fStrata').value;
+      const edu = document.getElementById('fEdu').value;
+      const kerja = document.getElementById('fKerja').value;
+      const incomeKir = parseFloat(document.getElementById('fIncome').value) || 0;
+      const productivity = document.getElementById('fProductivity').value;
+      const phone = document.getElementById('fPhone').value;
+
+      // Ahli Isi Rumah (AIR)
+      const air = [];
+      const rows = document.querySelectorAll('#airTableBody tr');
+      let airIncTotal = 0;
+      rows.forEach(r => {
+        const aName = r.querySelector('.air-name').value;
+        const aRel = r.querySelector('.air-rel').value;
+        const aAge = parseInt(r.querySelector('.air-age').value) || 0;
+        const aJob = r.querySelector('.air-job').value;
+        const aInc = parseFloat(r.querySelector('.air-inc').value) || 0;
+        airIncTotal += aInc;
+        air.push({ nama: aName, hubungan: aRel, umur: aAge, kerja: aJob, inc: aInc });
+      });
+
+      const totalPax = 1 + air.length;
+      const totalInc = incomeKir + airIncTotal;
+      const perCapita = totalInc / totalPax;
+      const statusPGK = checkPGK(strata, perCapita);
+
+      // Kemahiran
+      const selectedSkills = [];
+      document.querySelectorAll('input[name="skillCheck"]:checked').forEach(cb => {
+        selectedSkills.push(cb.value);
+      });
+
+      const recordData = {
+        id: editId || 'rec-' + Date.now(),
+        nama, ic, umur, jantina, kahwin, daerah, dun, strata, edu, kerja,
+        incomeKir, air, totalInc, perCapita, statusPGK,
+        hasHelp: document.getElementById('fHasHelp').value,
+        helpAgency: document.getElementById('fHelpAgency').value,
+        helpVal: parseFloat(document.getElementById('fHelpVal').value) || 0,
+        productivity, phone, skills: selectedSkills,
+        kkName: document.getElementById('fKkName').value,
+        kkPhone: document.getElementById('fKkPhone').value,
+        kkDate: document.getElementById('fKkDate').value
+      };
+
+      if (editId) {
+        const idx = records.findIndex(x => x.id === editId);
+        if (idx !== -1) records[idx] = recordData;
+      } else {
+        records.unshift(recordData);
+      }
+
+      localStorage.setItem('ebanci_johor_proto_db', JSON.stringify(records));
+      closeModal();
+      renderDashboard();
+      renderRecordsTable();
     }
 
-    function printIndividualRecord() {
-      window.print();
+    function deleteRecord(id) {
+      if (confirm('Adakah anda pasti untuk memadamkan rekod ini?')) {
+        records = records.filter(x => x.id !== id);
+        localStorage.setItem('ebanci_johor_proto_db', JSON.stringify(records));
+        renderDashboard();
+        renderRecordsTable();
+      }
     }
 
-    function printExecutiveReport() {
-      window.print();
-    }
-
-    function exportExcelFull() {
-      if (!records || records.length === 0) {
-        showToast("Tiada data untuk dieksport.", false);
+    function exportExcel() {
+      if (!records.length) {
+        alert('Tiada rekod untuk dieksport.');
         return;
       }
 
-      // Sheet 1: KIR
-      const sheetKIR = records.map((r, i) => {
-        const airIncome = (r.air || []).reduce((acc, a) => acc + (parseFloat(a.pendapatan) || 0), 0);
-        const tot = (parseFloat(r.income) || 0) + airIncome;
-        const countMembers = (r.air ? r.air.length : 0) + 1;
-        const perCapita = tot / countMembers;
-        const pgk = calculatePovertyStatus(perCapita).status;
+      const rows = records.map(r => ({
+        "Nama KIR": r.nama,
+        "No. Kad Pengenalan": r.ic,
+        "Umur": r.umur,
+        "Jantina": r.jantina,
+        "Daerah": r.daerah,
+        "Mukim / DUN": r.dun,
+        "Strata": r.strata,
+        "Pendidikan": r.edu,
+        "Pekerjaan": r.kerja,
+        "Pendapatan KIR (RM)": r.incomeKir,
+        "Bil Tanggungan (AIR)": r.air ? r.air.length : 0,
+        "Jumlah Pendapatan Isi Rumah (RM)": r.totalInc,
+        "Pendapatan Per Kapita (RM)": r.perCapita.toFixed(2),
+        "Status PGK": r.statusPGK,
+        "Menerima Bantuan": r.hasHelp,
+        "Agensi Bantuan": r.helpAgency,
+        "Nilai Bantuan (RM)": r.helpVal,
+        "Kemahiran Dimiliki": (r.skills || []).join(', '),
+        "Pengesahan Ketua Kampung": r.kkName,
+        "Tarikh Bancian": r.kkDate
+      }));
 
-        return {
-          "Bil": i + 1,
-          "No Daftar": r.id,
-          "Nama KIR": r.nama,
-          "No Kad Pengenalan": r.ic,
-          "Umur": r.umur,
-          "Jantina": r.jantina,
-          "Taraf Perkahwinan": r.kahwin,
-          "No Telefon": r.phone,
-          "Alamat": r.alamat,
-          "Daerah": r.daerah,
-          "DUN": r.dun,
-          "Mukim": r.mukim,
-          "Strata": r.strata,
-          "Pendidikan Tertinggi": r.edu,
-          "Status Pekerjaan": r.kerjaStatus,
-          "Pekerjaan": r.pekerjaan,
-          "Pendapatan KIR (RM)": r.income,
-          "Bilangan AIR": r.air ? r.air.length : 0,
-          "Jumlah Pendapatan IR (RM)": tot,
-          "Pendapatan Per Kapita (RM)": perCapita,
-          "Klasifikasi Kemiskinan": pgk,
-          "Status Kesihatan": r.kesihatan,
-          "Penyakit Kronik": r.penyakit || "-",
-          "Produktiviti": r.produktiviti,
-          "Menerima Bantuan": r.hasHelp,
-          "Memiliki Kemahiran": r.hasSkill,
-          "Kemahiran Dimiliki": (r.skills || []).join(', '),
-          "Pengesah (Ketua Kampung)": r.kkNama,
-          "No Tel Pengesah": r.kkPhone,
-          "Tarikh Banci": r.kkDate
-        };
-      });
-
-      // Sheet 2: AIR
-      const sheetAIR = [];
-      records.forEach(r => {
-        (r.air || []).forEach((a, idx) => {
-          sheetAIR.push({
-            "No Daftar KIR": r.id,
-            "Nama KIR": r.nama,
-            "Bil Tanggungan": idx + 1,
-            "Nama AIR": a.nama,
-            "No Kad Pengenalan": a.ic,
-            "Umur": a.umur,
-            "Hubungan": a.hubungan,
-            "Status Kahwin": a.status,
-            "Pekerjaan": a.kerja,
-            "Pendapatan (RM)": a.pendapatan,
-            "Kesihatan": a.kesihatan === 'K' ? 'Kronik' : 'Tidak Kronik',
-            "Penyakit": a.penyakit || "-",
-            "Produktiviti": a.produktiviti === 'P' ? 'Produktif' : 'Tidak Produktif'
-          });
-        });
-      });
-
-      // Sheet 3: Bantuan
-      const sheetHelp = [];
-      records.forEach(r => {
-        (r.help || []).forEach((h, idx) => {
-          sheetHelp.push({
-            "No Daftar KIR": r.id,
-            "Nama KIR": r.nama,
-            "Bil Bantuan": idx + 1,
-            "Jenis Bantuan": h.jenis,
-            "Agensi / Pemberi": h.agensi,
-            "Penerima Bantuan": h.penerima,
-            "Kekerapan": h.kekerapan,
-            "Nilai Bantuan (RM)": h.nilai
-          });
-        });
-      });
-
+      const ws = XLSX.utils.json_to_sheet(rows);
       const wb = XLSX.utils.book_new();
-      const wsKIR = XLSX.utils.json_to_sheet(sheetKIR);
-      const wsAIR = XLSX.utils.json_to_sheet(sheetAIR);
-      const wsHelp = XLSX.utils.json_to_sheet(sheetHelp);
-
-      XLSX.utils.book_append_sheet(wb, wsKIR, "SENARAI_KIR_JOHOR");
-      XLSX.utils.book_append_sheet(wb, wsAIR, "AHLI_ISI_RUMAH_AIR");
-      XLSX.utils.book_append_sheet(wb, wsHelp, "BANTUAN_KEBAJIKAN");
-
-      const today = new Date().toISOString().split('T')[0];
-      XLSX.writeFile(wb, `e-Banci_Kasih_Johor_${today}.xlsx`);
-      showToast("Buku kerja Excel Johor (.xlsx) berjaya dimuat turun!");
+      XLSX.utils.book_append_sheet(wb, ws, "Bancian_Kemiskinan");
+      XLSX.writeFile(wb, "Data_Bancian_Kemiskinan_SUK_Johor.xlsx");
     }
+
+    // Inisialisasi awal
+    initSkillsCheckboxes();
+    renderDashboard();
+    renderRecordsTable();
   </script>
 </body>
 </html>
