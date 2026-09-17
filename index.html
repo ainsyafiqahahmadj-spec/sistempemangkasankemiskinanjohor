@@ -166,13 +166,11 @@
   <header>
     <div class="brand-wrap">
       <div class="brand-logos">
-        <!-- Jata Johor SVG -->
         <svg width="42" height="42" viewBox="0 0 100 100">
           <path d="M20,65 C15,45 25,25 40,25 C30,35 30,55 40,65 Z" fill="#c59b27" />
           <polygon points="50,22 53,30 62,30 55,36 57,45 50,40 43,45 45,36 38,30 47,30" fill="#c59b27" />
           <path d="M25,82 Q50,70 75,82 Q50,92 25,82" fill="#0c2340" stroke="#c59b27" stroke-width="2" />
         </svg>
-        <!-- Maju Johor SVG -->
         <svg width="32" height="38" viewBox="0 0 100 115">
           <polygon points="50,5 92,28 92,86 50,110 8,86 8,28" fill="#0c2340" stroke="#e2e8f0" stroke-width="4" />
           <path d="M8,28 L92,28 L92,58 Q50,75 8,58 Z" fill="#c51f24" />
@@ -204,7 +202,6 @@
     </aside>
 
     <main class="content">
-      <!-- TAB 1: DASHBOARD -->
       <section id="dash" class="page-section active">
         <div class="page-header">
           <div>
@@ -263,7 +260,6 @@
         </div>
       </section>
 
-      <!-- TAB 2: PANGKALAN DATA -->
       <section id="records" class="page-section">
         <div class="page-header">
           <div>
@@ -307,7 +303,6 @@
         </div>
       </section>
 
-      <!-- TAB 3: LAPORAN -->
       <section id="reports" class="page-section">
         <div class="page-header">
           <div>
@@ -340,7 +335,6 @@
         <form id="frmBanci" onsubmit="saveBanci(event)">
           <input type="hidden" id="editId">
 
-          <!-- BAHAGIAN A -->
           <div class="form-section-title">A. MAKLUMAT KETUA DAN ASAS ISI RUMAH</div>
           <div class="form-grid">
             <div class="form-group">
@@ -431,7 +425,6 @@
             </div>
           </div>
 
-          <!-- BAHAGIAN B -->
           <div class="form-section-title" style="display:flex; justify-content:space-between; align-items:center;">
             <span>B. MAKLUMAT AHLI ISI RUMAH (AIR)</span>
             <button type="button" class="btn btn-outline" style="padding:4px 8px; font-size:0.75rem;" onclick="addAirRow()">+ Tambah AIR</button>
@@ -452,7 +445,6 @@
             </table>
           </div>
 
-          <!-- KOTAK PENGIRAAN REAL-TIME -->
           <div class="calc-box">
             <div>
               <small>Pendapatan Isi Rumah</small>
@@ -472,7 +464,6 @@
             </div>
           </div>
 
-          <!-- BAHAGIAN C -->
           <div class="form-section-title">C. MAKLUMAT BANTUAN YANG DITERIMA</div>
           <div class="form-grid">
             <div class="form-group">
@@ -492,12 +483,10 @@
             </div>
           </div>
 
-          <!-- BAHAGIAN D -->
           <div class="form-section-title">D. MAKLUMAT KEMAHIRAN DAN POTENSI PENDAPATAN</div>
           <p style="font-size:0.75rem; color:var(--text-muted);">Tandakan kemahiran yang dimiliki oleh KIR atau AIR:</p>
           <div class="skills-grid" id="skillsContainer"></div>
 
-          <!-- BAHAGIAN F -->
           <div class="form-section-title">F. PENGESAHAN KETUA KAMPUNG</div>
           <div class="form-grid">
             <div class="form-group">
@@ -523,16 +512,14 @@
     </div>
   </div>
 
-  <!-- MODAL PAPARAN MAKLUMAT PENUH KIR (VIEW PROFIL) -->
+  <!-- MODAL PAPARAN MAKLUMAT PENUH KIR -->
   <div class="modal-overlay" id="modalView">
     <div class="modal-container" style="max-width: 900px;">
       <div class="modal-header">
         <h3>Profil Penuh Ketua Isi Rumah (KIR)</h3>
         <button onclick="closeViewModal()" style="background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;">&times;</button>
       </div>
-      <div class="modal-body" id="viewContent">
-        <!-- Kandungan dijana oleh JavaScript -->
-      </div>
+      <div class="modal-body" id="viewContent"></div>
       <div class="modal-footer no-print">
         <button type="button" class="btn btn-outline" onclick="closeViewModal()">Tutup</button>
         <button type="button" class="btn btn-johor" onclick="window.print()">🖨 Cetak Profil A4</button>
